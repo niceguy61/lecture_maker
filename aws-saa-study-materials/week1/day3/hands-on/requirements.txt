@@ -1,0 +1,26 @@
+# AWS EC2 Management Lab - Day 3
+# Python dependencies for EC2 hands-on exercises
+
+# AWS SDK for Python
+boto3>=1.26.0
+
+# Additional useful libraries for AWS development
+botocore>=1.29.0
+
+# For better CLI output formatting
+colorama>=0.4.6
+
+# For configuration management
+python-dotenv>=1.0.0
+
+# For JSON pretty printing and data manipulation
+tabulate>=0.9.0
+
+# For date/time handling
+python-dateutil>=2.8.2
+
+# For progress bars (optional, for enhanced UX)
+tqdm>=4.64.0
+
+# For better error handling and logging
+structlog>=22.3.0
