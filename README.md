@@ -10,6 +10,14 @@ AWS Solutions Architect Associate (SAA-C03) 시험 합격을 위한 체계적인
 - **웹사이트**: https://kiro.dev
 - **사용 모드**: Spec 모드 (Requirements → Design → Tasks)
 
+## 튜토리얼 영상
+
+이 프로젝트 생성 과정을 영상으로 확인할 수 있습니다:
+
+[![AWS SAA-C03 Study Materials 생성 과정](https://img.youtube.com/vi/tLTuQZUJo3Y/0.jpg)](https://www.youtube.com/watch?v=tLTuQZUJo3Y)
+
+**영상 링크**: https://www.youtube.com/watch?v=tLTuQZUJo3Y
+
 ## 원본 프롬프트
 
 이 프로젝트는 다음 프롬프트를 기반으로 생성되었습니다:
