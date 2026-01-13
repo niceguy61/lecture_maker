@@ -25,6 +25,9 @@ B) Route 53 + CloudFront + ALB + EC2 Auto Scaling + RDS Multi-AZ
 C) API Gateway + Lambda + DynamoDB + S3  
 D) ELB Classic + EC2 + RDS + ElastiCache
 
+<details>
+<summary>정답 및 해설</summary>
+
 **정답:** B) Route 53 + CloudFront + ALB + EC2 Auto Scaling + RDS Multi-AZ
 
 **해설:**
@@ -37,6 +40,8 @@ D) ELB Classic + EC2 + RDS + ElastiCache
 - **RDS Multi-AZ**: 데이터베이스 고가용성 보장
 
 A는 RDS Single-AZ로 고가용성 미보장, C는 서버리스 아키텍처로 3-tier와 다름, D는 구식 ELB Classic 사용으로 부적절합니다.
+
+</details>
 
 ---
 
@@ -59,6 +64,9 @@ B) Order Service → SQS → Payment Service → SNS → Notification Service
 C) Order Service → EventBridge → Payment Service & Notification Service  
 D) Order Service → Step Functions → Payment Service → Notification Service
 
+<details>
+<summary>정답 및 해설</summary>
+
 **정답:** C) Order Service → EventBridge → Payment Service & Notification Service
 
 **해설:**
@@ -71,6 +79,8 @@ D) Order Service → Step Functions → Payment Service → Notification Service
 - **재시도 및 DLQ**: 내장된 오류 처리 메커니즘
 
 A는 동기식 통신, B는 순차적 처리로 병렬 처리 불가, D는 Step Functions로 워크플로우 관리에 적합하지만 단순 이벤트 전파에는 과도합니다.
+
+</details>
 
 ---
 
@@ -85,6 +95,9 @@ A) Kinesis Data Streams → Lambda → RDS → QuickSight
 B) Kinesis Data Firehose → S3 → Glue ETL → Athena → QuickSight  
 C) Direct Connect → Redshift → Tableau  
 D) API Gateway → Lambda → DynamoDB → ElasticSearch
+
+<details>
+<summary>정답 및 해설</summary>
 
 **정답:** B) Kinesis Data Firehose → S3 → Glue ETL → Athena → QuickSight
 
@@ -106,6 +119,8 @@ D) API Gateway → Lambda → DynamoDB → ElasticSearch
 
 A는 RDS로 대용량 데이터 처리 부적합, C는 Redshift 단독으로 데이터 레이크 패턴 아님, D는 실시간 검색에 특화되어 배치 분석에 부적합합니다.
 
+</details>
+
 ---
 
 ## 문제 4: 하이브리드 클라우드 연결성 최적화
@@ -124,6 +139,9 @@ B) Site-to-Site VPN (Primary) + Direct Connect (백업)
 C) Direct Connect (10Gbps) 단독  
 D) 인터넷 기반 VPN 터널 2개
 
+<details>
+<summary>정답 및 해설</summary>
+
 **정답:** A) Direct Connect (1Gbps) + Site-to-Site VPN (백업)
 
 **해설:**
@@ -140,6 +158,8 @@ D) 인터넷 기반 VPN 터널 2개
 - **빠른 구축**: Direct Connect 구축 기간 동안 임시 연결로도 활용
 
 B는 VPN을 Primary로 사용하여 성능 저하, C는 10Gbps로 과도한 용량과 비용, D는 안정성과 성능 부족합니다.
+
+</details>
 
 ---
 
@@ -162,6 +182,9 @@ B) Lambda 메모리를 1024MB로 늘리고 CloudFront 추가
 C) API Gateway를 ALB로 교체하고 Lambda를 EC2로 변경  
 D) Lambda를 Python으로 변경하고 S3 Intelligent Tiering 적용
 
+<details>
+<summary>정답 및 해설</summary>
+
 **정답:** B) Lambda 메모리를 1024MB로 늘리고 CloudFront 추가
 
 **해설:**
@@ -178,6 +201,8 @@ D) Lambda를 Python으로 변경하고 S3 Intelligent Tiering 적용
 - **글로벌 성능**: 전 세계 사용자에게 빠른 응답
 
 A는 메모리 감소로 실행시간 증가하여 비용 증가, C는 서버리스 장점 포기, D는 런타임 변경으로 개발 비용 증가하며 효과 제한적입니다.
+
+</details>
 
 ---
 
