@@ -1,11 +1,13 @@
 # Week 2 종합 퀴즈: 스토리지 및 데이터베이스 서비스
 
 ## 📋 퀴즈 정보
-- **문제 수**: 10문제
-- **제한 시간**: 20분
-- **합격 점수**: 70점 (7문제 이상 정답)
+- **문제 수**: 15문제
+- **제한 시간**: 30분
+- **합격 점수**: 105점 (70% 이상, 11문제 이상 정답)
 - **난이도**: 중급
 - **범위**: Week 2 전체 내용 (Day 8-13)
+- **선택지**: 각 문제당 5개 선택지 (A, B, C, D, E)
+- **복수 정답**: 4문제 (문제 3, 4, 13, 15) - 전체의 약 27%
 
 ---
 
@@ -22,6 +24,7 @@ A) Standard → Standard-IA → Glacier Instant Retrieval
 B) Standard → One Zone-IA → Glacier Flexible Retrieval  
 C) Standard → Standard-IA → Glacier Deep Archive  
 D) Standard → Glacier Instant Retrieval → Glacier Deep Archive  
+E) Intelligent-Tiering → Glacier Flexible Retrieval → Deep Archive  
 
 <details>
 <summary>정답 및 해설</summary>
@@ -88,22 +91,21 @@ A) 복잡한 조인 쿼리가 필요한 재무 시스템
 B) ACID 트랜잭션이 중요한 주문 관리 시스템  
 C) 초당 수만 건의 읽기/쓰기가 필요한 게임 리더보드  
 D) 복잡한 분석 쿼리가 필요한 데이터 웨어하우스  
+E) 실시간 채팅 애플리케이션의 메시지 저장  
 
 <details>
 <summary>정답 및 해설</summary>
 
-**정답: C) 초당 수만 건의 읽기/쓰기가 필요한 게임 리더보드**
+**정답: C, E**
 
 **해설:**
-DynamoDB가 적합한 이유:
-- 높은 확장성: 초당 수만 건 처리 가능
-- 낮은 지연시간: 한 자리 밀리초
-- 자동 확장: 트래픽 증가에 자동 대응
-- 단순한 데이터 모델: 키-값 구조로 충분
+DynamoDB가 적합한 시나리오들:
+- **C) 게임 리더보드**: 높은 확장성, 낮은 지연시간, 자동 확장으로 초당 수만 건 처리 가능
+- **E) 실시간 채팅**: 빠른 읽기/쓰기, 단순한 키-값 구조로 메시지 저장에 적합
 
 **다른 선택지 분석:**
 - A) 복잡한 조인 → RDS/Aurora 적합
-- B) ACID 트랜잭션 → RDS 적합
+- B) ACID 트랜잭션 → RDS 적합  
 - D) 복잡한 분석 쿼리 → Redshift 적합
 </details>
 
@@ -123,23 +125,22 @@ A) AWS DataSync 사용
 B) AWS DMS (Database Migration Service) 사용  
 C) AWS Storage Gateway 사용  
 D) AWS Snowball 사용  
+E) AWS Database Migration Service + Schema Conversion Tool 사용  
 
 <details>
 <summary>정답 및 해설</summary>
 
-**정답: B) AWS DMS (Database Migration Service) 사용**
+**정답: B, E**
 
 **해설:**
-AWS DMS가 적합한 이유:
-- 이종 데이터베이스 마이그레이션 지원 (Oracle → PostgreSQL)
-- 최소 다운타임: 지속적인 데이터 복제 (CDC) 지원
-- 데이터 일관성: 트랜잭션 로그 기반 복제
-- 스키마 변환: AWS SCT(Schema Conversion Tool)와 연동
+이종 데이터베이스 마이그레이션에 적합한 솔루션들:
+- **B) AWS DMS**: 최소 다운타임으로 지속적인 데이터 복제 (CDC) 지원, 데이터 일관성 보장
+- **E) DMS + SCT**: 스키마 변환(SCT)과 데이터 마이그레이션(DMS)을 함께 사용하는 완전한 솔루션
 
 **다른 서비스 용도:**
-- DataSync: 파일 시스템 동기화
-- Storage Gateway: 하이브리드 스토리지
-- Snowball: 대용량 데이터 물리적 전송
+- A) DataSync: 파일 시스템 동기화
+- C) Storage Gateway: 하이브리드 스토리지
+- D) Snowball: 대용량 데이터 물리적 전송
 </details>
 
 ---
@@ -247,12 +248,12 @@ Hot Partition 문제의 근본 원인:
 A) 자동 백업은 최대 35일까지 보관 가능하다  
 B) 자동 백업은 다른 리전에 자동으로 복사된다  
 C) 자동 백업 중에는 데이터베이스 성능이 크게 저하된다  
-D) Multi-AZ 배포에서는 Standby에서 백업이 수행된다  
+D) Multi-AZ 배포에서는 Standby에서 백업이 수행된다
 
 <details>
 <summary>정답 및 해설</summary>
 
-**정답: D) Multi-AZ 배포에서는 Standby에서 백업이 수행된다**
+**정답: D**
 
 **해설:**
 RDS Multi-AZ 백업 특징:
@@ -319,7 +320,7 @@ D) 6개의 데이터 복사본을 3개 AZ에 저장한다
 <details>
 <summary>정답 및 해설</summary>
 
-**정답: C) 쓰기 작업은 모든 Read Replica에서 가능하다**
+**정답: C**
 
 **해설:**
 Aurora 아키텍처:
@@ -340,55 +341,6 @@ Aurora 아키텍처:
 
 ---
 
-## 📊 채점 기준
-
-| 점수 | 등급 | 평가 |
-|------|------|------|
-| 90-100점 | A | 우수 - Week 3 진행 준비 완료 |
-| 80-89점 | B | 양호 - 일부 복습 후 진행 |
-| 70-79점 | C | 보통 - 취약 부분 집중 복습 필요 |
-| 60-69점 | D | 미흡 - Week 2 전체 재학습 권장 |
-| 60점 미만 | F | 불합격 - 기초부터 다시 학습 |
-
-## 🔍 오답 분석 가이드
-
-### 60점 미만인 경우
-- Week 2 전체 내용 재학습
-- 각 서비스별 핵심 개념 정리
-- 실습 다시 수행
-
-### 60-79점인 경우
-- 틀린 문제 관련 Day 재학습
-- 해당 서비스 AWS 문서 참조
-- 추가 실습 수행
-
-### 80점 이상인 경우
-- Week 3 진행 준비 완료
-- 틀린 부분만 간단히 복습
-- 심화 학습 자료 참조
-
-## 📚 추가 학습 자료
-
-### AWS 공식 문서
-- [S3 사용자 가이드](https://docs.aws.amazon.com/s3/)
-- [RDS 사용자 가이드](https://docs.aws.amazon.com/rds/)
-- [DynamoDB 개발자 가이드](https://docs.aws.amazon.com/dynamodb/)
-
-### 실습 환경
-- [AWS Free Tier](https://aws.amazon.com/free/)
-- [AWS Hands-on Tutorials](https://aws.amazon.com/getting-started/hands-on/)
-
-### 시험 준비
-- [AWS SAA-C03 시험 가이드](https://aws.amazon.com/certification/certified-solutions-architect-associate/)
-- [AWS 샘플 문제](https://d1.awsstatic.com/training-and-certification/docs-sa-assoc/AWS-Certified-Solutions-Architect-Associate_Sample-Questions.pdf)
-
----
-
-**퀴즈 완료 후 다음 단계:**
-1. 점수 확인 및 오답 분석
-2. 부족한 부분 복습
-3. Week 3 Day 15 학습 준비
-4. 스토리지 서비스 치트 시트 활용
 
 ## 문제 11
 **주제**: AWS Glue와 데이터 카탈로그 (Day 12)
@@ -439,7 +391,7 @@ D) 복제된 객체는 원본과 다른 스토리지 클래스를 가질 수 없
 <details>
 <summary>정답 및 해설</summary>
 
-**정답: B) 소스와 대상 버킷의 버전 관리가 모두 활성화되어야 한다**
+**정답: B**
 
 **해설:**
 S3 CRR 요구사항:
@@ -470,28 +422,27 @@ A) 여러 AWS 리전에 걸쳐 완전 관리형 다중 마스터 복제를 제�
 B) 강력한 일관성(Strong Consistency) 읽기를 모든 리전에서 보장한다  
 C) 자동 장애 조치 기능을 제공한다  
 D) DynamoDB Streams가 활성화되어야 한다  
+E) 모든 리전에서 동일한 테이블 이름을 사용해야 한다  
 
 <details>
 <summary>정답 및 해설</summary>
 
-**정답: B) 강력한 일관성(Strong Consistency) 읽기를 모든 리전에서 보장한다**
+**정답: B, E**
 
 **해설:**
-DynamoDB Global Tables 일관성 모델:
-- 최종 일관성(Eventual Consistency) 제공
-- 일반적으로 1초 이내 전파
-- 강력한 일관성은 로컬 리전에서만 가능
+DynamoDB Global Tables의 잘못된 특징들:
+- **B) 강력한 일관성**: 최종 일관성(Eventual Consistency)만 제공, 강력한 일관성은 로컬 리전에서만 가능
+- **E) 테이블 이름**: 각 리전에서 다른 테이블 이름 사용 가능, 동일한 이름 필수 아님
+
+**올바른 Global Tables 특징:**
+- A) 다중 마스터 복제 (모든 리전에서 읽기/쓰기 가능)
+- C) 자동 장애 조치 기능 제공
+- D) DynamoDB Streams 기반 복제 (활성화 필수)
 
 **Global Tables 특징:**
-- 다중 마스터 복제 (모든 리전에서 읽기/쓰기 가능)
-- 자동 장애 조치
-- DynamoDB Streams 기반 복제
+- 일반적으로 1초 이내 전파
 - 충돌 해결 메커니즘 (Last Writer Wins)
-
-**사용 사례:**
-- 글로벌 애플리케이션
-- 재해 복구
-- 지연 시간 최적화
+- 글로벌 애플리케이션 및 재해 복구에 적합
 </details>
 
 ---
@@ -540,31 +491,33 @@ A) 자동 백업은 암호화를 지원하지 않는다
 B) 수동 스냅샷은 DB 인스턴스 삭제 시 함께 삭제된다  
 C) 자동 백업은 Point-in-Time Recovery를 지원하지만 수동 스냅샷은 지원하지 않는다  
 D) 수동 스냅샷은 보관 기간 제한이 없다  
+E) 자동 백업은 다른 리전으로 복사할 수 없다  
 
 <details>
 <summary>정답 및 해설</summary>
 
-**정답: D) 수동 스냅샷은 보관 기간 제한이 없다**
+**정답: C, D**
 
 **해설:**
-RDS 백업 유형 비교:
+RDS 자동 백업과 수동 스냅샷의 올바른 차이점들:
+- **C) Point-in-Time Recovery**: 자동 백업만 지원, 수동 스냅샷은 특정 시점 복구만 가능
+- **D) 보관 기간**: 수동 스냅샷은 무제한, 자동 백업은 0-35일 제한
+
+**RDS 백업 유형 비교:**
 
 **자동 백업:**
 - 보관 기간: 0-35일 (기본 7일)
 - Point-in-Time Recovery 지원
 - DB 인스턴스 삭제 시 함께 삭제
-- 백업 윈도우 중 자동 수행
 
 **수동 스냅샷:**
 - 보관 기간: 무제한 (명시적 삭제 전까지)
 - 특정 시점 복구만 가능
 - DB 인스턴스 삭제 후에도 유지
-- 사용자가 수동으로 생성
 
 **공통 특징:**
 - 둘 다 암호화 지원
 - 다른 리전으로 복사 가능
-- 새 DB 인스턴스 생성 시 사용 가능
 </details>
 
 ---
@@ -580,3 +533,43 @@ RDS 백업 유형 비교:
 | 90점 미만 | F | 불합격 - 기초부터 다시 학습 |
 
 **합격 기준**: 105점 이상 (70% 이상, 11문제 이상 정답)
+
+## 🔍 오답 분석 가이드
+
+### 60점 미만인 경우
+- Week 2 전체 내용 재학습
+- 각 서비스별 핵심 개념 정리
+- 실습 다시 수행
+
+### 60-79점인 경우
+- 틀린 문제 관련 Day 재학습
+- 해당 서비스 AWS 문서 참조
+- 추가 실습 수행
+
+### 80점 이상인 경우
+- Week 3 진행 준비 완료
+- 틀린 부분만 간단히 복습
+- 심화 학습 자료 참조
+
+## 📚 추가 학습 자료
+
+### AWS 공식 문서
+- [S3 사용자 가이드](https://docs.aws.amazon.com/s3/)
+- [RDS 사용자 가이드](https://docs.aws.amazon.com/rds/)
+- [DynamoDB 개발자 가이드](https://docs.aws.amazon.com/dynamodb/)
+
+### 실습 환경
+- [AWS Free Tier](https://aws.amazon.com/free/)
+- [AWS Hands-on Tutorials](https://aws.amazon.com/getting-started/hands-on/)
+
+### 시험 준비
+- [AWS SAA-C03 시험 가이드](https://aws.amazon.com/certification/certified-solutions-architect-associate/)
+- [AWS 샘플 문제](https://d1.awsstatic.com/training-and-certification/docs-sa-assoc/AWS-Certified-Solutions-Architect-Associate_Sample-Questions.pdf)
+
+---
+
+**퀴즈 완료 후 다음 단계:**
+1. 점수 확인 및 오답 분석
+2. 부족한 부분 복습
+3. Week 3 Day 15 학습 준비
+4. 스토리지 서비스 치트 시트 활용
