@@ -99,47 +99,47 @@ AWS SAA-C03 시험 합격을 위한 1달간의 체계적인 학습 자료를 직
   - [x] 15.4 스토리지 서비스 비교 치트 시트 작성
   - _Requirements: 7.3, 5.1, 4.1_
 
-- [ ] 16. Week 3 Day 15 학습 자료 생성
-  - [ ] 16.1 Day 15 이론 콘텐츠 작성 (Load Balancing & Auto Scaling, 시각화 자료 포함)
-  - [ ] 16.2 Day 15 AWS Console 실습 가이드 작성 (ALB 및 Auto Scaling 그룹 설정)
-  - [ ] 16.3 Day 15 퀴즈 작성 (5문제)
+- [x] 16. Week 3 Day 15 학습 자료 생성
+  - [x] 16.1 Day 15 이론 콘텐츠 작성 (Load Balancing & Auto Scaling, 시각화 자료 포함)
+  - [x] 16.2 Day 15 AWS Console 실습 가이드 작성 (ALB 및 Auto Scaling 그룹 설정)
+  - [x] 16.3 Day 15 퀴즈 작성 (5문제)
   - _Requirements: 2.3, 3.4, 5.2, 4.1_
 
-- [ ] 17. Week 3 Day 16 학습 자료 생성
-  - [ ] 17.1 Day 16 이론 콘텐츠 작성 (CloudFront & CDN, 시각화 자료 포함)
-  - [ ] 17.2 Day 16 AWS Console 실습 가이드 작성 (CloudFront 배포 설정)
-  - [ ] 17.3 Day 16 퀴즈 작성 (5문제)
+- [x] 17. Week 3 Day 16 학습 자료 생성
+  - [x] 17.1 Day 16 이론 콘텐츠 작성 (CloudFront & CDN, 시각화 자료 포함)
+  - [x] 17.2 Day 16 AWS Console 실습 가이드 작성 (CloudFront 배포 설정)
+  - [x] 17.3 Day 16 퀴즈 작성 (5문제)
   - _Requirements: 2.3, 3.4, 5.2, 4.1_
 
-- [ ] 18. Week 3 Day 17 학습 자료 생성
-  - [ ] 18.1 Day 17 이론 콘텐츠 작성 (Route 53 & DNS, 시각화 자료 포함)
-  - [ ] 18.2 Day 17 AWS Console 실습 가이드 작성 (Route 53 호스팅 영역 및 레코드 설정)
-  - [ ] 18.3 Day 17 퀴즈 작성 (5문제)
+- [x] 18. Week 3 Day 17 학습 자료 생성
+  - [x] 18.1 Day 17 이론 콘텐츠 작성 (Route 53 & DNS, 시각화 자료 포함)
+  - [x] 18.2 Day 17 AWS Console 실습 가이드 작성 (Route 53 호스팅 영역 및 레코드 설정)
+  - [x] 18.3 Day 17 퀴즈 작성 (5문제)
   - _Requirements: 2.3, 3.4, 5.2, 4.1_
 
-- [ ] 19. Week 3 Day 18 학습 자료 생성 (서버리스)
-  - [ ] 19.1 Day 18 이론 콘텐츠 작성 (API Gateway & Lambda, 시각화 자료 포함)
-  - [ ] 19.2 Day 18 AWS Console 및 Python 실습 가이드 작성 (Lambda 함수 생성 및 API Gateway 연동)
-  - [ ] 19.3 Day 18 퀴즈 작성 (5문제)
+- [x] 19. Week 3 Day 18 학습 자료 생성 (서버리스)
+  - [x] 19.1 Day 18 이론 콘텐츠 작성 (API Gateway & Lambda, 시각화 자료 포함)
+  - [x] 19.2 Day 18 AWS Console 및 Python 실습 가이드 작성 (Lambda 함수 생성 및 API Gateway 연동)
+  - [x] 19.3 Day 18 퀴즈 작성 (5문제)
   - _Requirements: 2.3, 3.4, 5.2, 4.1_
 
-- [ ] 20. Week 3 Day 19 학습 자료 생성
-  - [ ] 20.1 Day 19 이론 콘텐츠 작성 (ECS, EKS, Fargate, 시각화 자료 포함)
-  - [ ] 20.2 Day 19 AWS Console 실습 가이드 작성 (ECS 클러스터 및 서비스 생성)
-  - [ ] 20.3 Day 19 퀴즈 작성 (5문제)
+- [x] 20. Week 3 Day 19 학습 자료 생성
+  - [x] 20.1 Day 19 이론 콘텐츠 작성 (ECS, EKS, Fargate, 시각화 자료 포함)
+  - [x] 20.2 Day 19 AWS Console 실습 가이드 작성 (ECS 클러스터 및 서비스 생성)
+  - [x] 20.3 Day 19 퀴즈 작성 (5문제)
   - _Requirements: 3.5, 5.1, 5.4, 4.1_
 
-- [ ] 21. Week 3 Day 20 학습 자료 생성
-  - [ ] 21.1 Day 20 이론 콘텐츠 작성 (배포 및 관리 도구, 시각화 자료 포함)
-  - [ ] 21.2 Day 20 AWS Console 실습 가이드 작성 (CodePipeline 및 CodeDeploy 설정)
-  - [ ] 21.3 Day 20 퀴즈 작성 (5문제)
+- [x] 21. Week 3 Day 20 학습 자료 생성
+  - [x] 21.1 Day 20 이론 콘텐츠 작성 (배포 및 관리 도구, 시각화 자료 포함)
+  - [x] 21.2 Day 20 AWS Console 실습 가이드 작성 (CodePipeline 및 CodeDeploy 설정)
+  - [x] 21.3 Day 20 퀴즈 작성 (5문제)
   - _Requirements: 3.5, 5.1, 5.4, 4.1_
 
-- [ ] 22. Week 3 Day 21 학습 자료 생성
-  - [ ] 22.1 Day 21 주간 복습 자료 작성
-  - [ ] 22.2 Day 21 AWS Console 실습 프로젝트 가이드 작성 (마이크로서비스 아키텍처 구축)
-  - [ ] 22.3 Day 21 종합 퀴즈 작성 (10문제)
-  - [ ] 22.4 애플리케이션 아키텍처 패턴 다이어그램 작성
+- [x] 22. Week 3 Day 21 학습 자료 생성
+  - [x] 22.1 Day 21 주간 복습 자료 작성
+  - [x] 22.2 Day 21 AWS Console 실습 프로젝트 가이드 작성 (마이크로서비스 아키텍처 구축)
+  - [x] 22.3 Day 21 종합 퀴즈 작성 (15문제)
+  - [x] 22.4 애플리케이션 아키텍처 패턴 다이어그램 작성
   - _Requirements: 6.4, 5.1, 4.1_
 
 - [ ] 23. Week 4 Day 22 학습 자료 생성
