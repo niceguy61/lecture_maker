@@ -1,259 +1,385 @@
-# Day 1 실습 가이드: AWS 계정 설정
+# Day 1 실습: AWS 계정 설정 및 Console 탐색
 
-## 실습 개요
+## 실습 목표
+- AWS 계정 생성 및 초기 설정 완료
+- AWS Management Console 기본 탐색 방법 습득
+- 보안 설정 및 결제 알림 구성
+- Free Tier 사용량 모니터링 설정
 
-이 실습에서는 AWS 계정을 설정하고 기본적인 구성을 확인하는 방법을 학습합니다. Python 스크립트를 사용하여 계정 정보, 리전, 가용 영역 등을 확인하고 보안 권장사항을 검토합니다.
+## 실습 시간
+약 45분
 
-## 사전 준비사항
+## 전제 조건
+- 유효한 이메일 주소
+- 신용카드 또는 체크카드 (Free Tier 사용 시에도 필요)
+- 휴대폰 번호 (SMS 인증용)
 
-### 1. AWS 계정 생성
-1. [AWS 공식 웹사이트](https://aws.amazon.com)에 접속
-2. "AWS 계정 생성" 클릭
-3. 이메일 주소, 비밀번호, 계정 이름 입력
-4. 연락처 정보 및 결제 정보 입력
-5. 전화번호 인증 완료
-6. 지원 플랜 선택 (기본 플랜 선택 권장)
+## 실습 1: AWS 계정 생성
 
-### 2. AWS CLI 설치
+### 1.1 AWS 계정 생성 시작
 
-#### Windows
-```bash
-# Chocolatey 사용 (권장)
-choco install awscli
+1. **AWS 홈페이지 접속**
+   - 브라우저에서 https://aws.amazon.com 접속
+   - 우측 상단 "AWS 계정 생성" 버튼 클릭
 
-# 또는 MSI 인스톨러 다운로드
-# https://awscli.amazonaws.com/AWSCLIV2.msi
-```
-
-#### macOS
-```bash
-# Homebrew 사용 (권장)
-brew install awscli
-
-# 또는 pkg 인스톨러 다운로드
-# https://awscli.amazonaws.com/AWSCLIV2.pkg
-```
-
-#### Linux (Ubuntu/Debian)
-```bash
-# apt 패키지 매니저 사용
-sudo apt update
-sudo apt install awscli
-
-# 또는 pip 사용
-pip3 install awscli
-```
-
-### 3. Python 환경 설정
-
-#### Python 3.7+ 설치 확인
-```bash
-python3 --version
-# 또는
-python --version
-```
-
-#### 가상 환경 생성 (권장)
-```bash
-# 가상 환경 생성
-python3 -m venv aws-study-env
-
-# 가상 환경 활성화
-# Windows
-aws-study-env\Scripts\activate
-
-# macOS/Linux
-source aws-study-env/bin/activate
-```
-
-## AWS 자격 증명 설정
-
-### 방법 1: AWS CLI 구성 (권장)
-
-1. **IAM 사용자 생성** (루트 계정 사용 지양)
-   - AWS 콘솔 → IAM → 사용자 → 사용자 추가
-   - 프로그래밍 방식 액세스 선택
-   - 적절한 권한 정책 연결 (예: PowerUserAccess)
-   - 액세스 키 ID와 비밀 액세스 키 저장
-
-2. **AWS CLI 구성**
-```bash
-aws configure
-```
-
-입력 정보:
-- AWS Access Key ID: [IAM 사용자의 액세스 키]
-- AWS Secret Access Key: [IAM 사용자의 비밀 키]
-- Default region name: ap-northeast-2 (서울 리전)
-- Default output format: json
-
-### 방법 2: 환경 변수 설정
-
-```bash
-# Windows (PowerShell)
-$env:AWS_ACCESS_KEY_ID="your-access-key"
-$env:AWS_SECRET_ACCESS_KEY="your-secret-key"
-$env:AWS_DEFAULT_REGION="ap-northeast-2"
-
-# macOS/Linux (Bash)
-export AWS_ACCESS_KEY_ID="your-access-key"
-export AWS_SECRET_ACCESS_KEY="your-secret-key"
-export AWS_DEFAULT_REGION="ap-northeast-2"
-```
-
-## 실습 실행
-
-### 1. 의존성 설치
-
-```bash
-# 프로젝트 디렉토리로 이동
-cd aws-saa-study-materials/week1/day1/hands-on
-
-# 필요한 패키지 설치
-pip install -r requirements.txt
-```
-
-### 2. 실습 스크립트 실행
-
-```bash
-# 기본 실행
-python aws-account-setup.py
-
-# 또는 실행 권한 부여 후 직접 실행 (Linux/macOS)
-chmod +x aws-account-setup.py
-./aws-account-setup.py
-```
-
-### 3. 실행 결과 확인
-
-스크립트 실행 시 다음과 같은 정보들이 출력됩니다:
-
-1. **AWS 계정 정보**
-   - 계정 ID
-   - 사용자 ARN
-   - 현재 리전
-
-2. **사용 가능한 리전 목록**
-   - 전 세계 AWS 리전 정보
-   - 각 리전의 엔드포인트
-
-3. **가용 영역 정보**
-   - 현재 리전의 AZ 목록
-   - 각 AZ의 상태 및 ID
-
-4. **IAM 사용자 상태**
-   - 현재 사용자 정보
-   - 연결된 정책 및 그룹
-
-5. **결제 정보** (권한이 있는 경우)
-   - 최근 30일 비용 정보
-
-6. **보안 권장사항**
-   - AWS 보안 모범 사례
-
-7. **설정 보고서**
-   - JSON 형태의 상세 보고서 파일 생성
-
-## 예상 출력 예시
-
-```
-AWS SAA-C03 Study Materials
-Day 1 Hands-on Lab: AWS Account Setup
-==================================================
-✅ AWS 클라이언트 초기화 완료
-
-==================================================
-1. AWS 계정 정보 확인
-==================================================
-📋 계정 ID: 123456789012
-👤 사용자 ARN: arn:aws:iam::123456789012:user/study-user
-🆔 사용자 ID: AIDACKCEVSQ6C2EXAMPLE
-🌍 현재 리전: ap-northeast-2
-
-==================================================
-2. 사용 가능한 AWS 리전 확인
-==================================================
-📍 총 33개 리전 사용 가능:
-  • us-east-1: ec2.us-east-1.amazonaws.com
-  • us-east-2: ec2.us-east-2.amazonaws.com
-  • ap-northeast-2: ec2.ap-northeast-2.amazonaws.com
-  ...
-
-==================================================
-3. 현재 리전의 가용 영역 확인
-==================================================
-🏢 ap-northeast-2 리전의 가용 영역:
-  ✅ ap-northeast-2a (ID: apne2-az1, Type: availability-zone)
-  ✅ ap-northeast-2b (ID: apne2-az2, Type: availability-zone)
-  ✅ ap-northeast-2c (ID: apne2-az3, Type: availability-zone)
-  ✅ ap-northeast-2d (ID: apne2-az4, Type: availability-zone)
-```
-
-## 문제 해결
-
-### 자주 발생하는 오류
-
-1. **NoCredentialsError**
+2. **계정 정보 입력**
    ```
-   ❌ AWS 자격 증명이 설정되지 않았습니다.
+   📝 입력 정보:
+   - 이메일 주소: 실제 사용하는 이메일 (루트 계정이 됨)
+   - 암호: 강력한 암호 설정 (8자 이상, 대소문자, 숫자, 특수문자 포함)
+   - AWS 계정 이름: 식별하기 쉬운 이름 (예: "홍길동-학습용")
    ```
-   - 해결: AWS CLI 구성 또는 환경 변수 설정 확인
 
-2. **AccessDenied**
+3. **이메일 인증**
+   - 입력한 이메일로 인증 코드 발송
+   - 이메일 확인 후 인증 코드 입력
+
+### 1.2 연락처 정보 입력
+
+1. **계정 유형 선택**
+   - "개인" 선택 (학습 목적)
+
+2. **연락처 정보 입력**
    ```
-   ❌ 권한이 없습니다.
+   📝 입력 정보:
+   - 전체 이름: 실명 입력
+   - 전화번호: 휴대폰 번호 (+82 10-XXXX-XXXX)
+   - 국가/지역: 대한민국
+   - 주소: 실제 주소 입력
    ```
-   - 해결: IAM 사용자에게 적절한 권한 정책 연결
 
-3. **RegionNotFound**
+3. **AWS 고객 계약 동의**
+   - 이용 약관 확인 후 체크박스 선택
+
+### 1.3 결제 정보 입력
+
+1. **신용카드 정보 입력**
    ```
-   ❌ 리전을 찾을 수 없습니다.
+   ⚠️ 중요 사항:
+   - Free Tier 사용 시에도 신용카드 등록 필수
+   - 실제 요금은 Free Tier 한도 초과 시에만 청구
+   - 해외 결제 가능한 카드 사용 권장
    ```
-   - 해결: 올바른 리전 코드 사용 (예: ap-northeast-2)
 
-### 권한 설정 가이드
+2. **결제 주소 확인**
+   - 카드 청구 주소와 동일한지 확인
 
-실습을 위한 최소 권한 정책:
+### 1.4 자격 증명 확인
 
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "sts:GetCallerIdentity",
-                "ec2:DescribeRegions",
-                "ec2:DescribeAvailabilityZones",
-                "iam:GetUser",
-                "iam:ListAttachedUserPolicies",
-                "iam:ListUserPolicies",
-                "iam:GetGroupsForUser"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
+1. **전화 인증**
+   - 입력한 전화번호로 자동 음성 통화
+   - 화면에 표시된 4자리 PIN 번호를 전화기 키패드로 입력
+
+2. **인증 완료 확인**
+   - "자격 증명이 확인되었습니다" 메시지 확인
+
+### 1.5 지원 플랜 선택
+
+1. **Basic 지원 플랜 선택**
+   - "기본 지원 - 무료" 선택
+   - 학습 목적으로는 기본 플랜으로 충분
+
+2. **계정 생성 완료**
+   - "축하합니다!" 페이지 확인
+   - "AWS Management Console로 이동" 클릭
+
+## 실습 2: AWS Management Console 탐색
+
+### 2.1 Console 로그인
+
+1. **로그인 페이지 접속**
+   - https://console.aws.amazon.com 접속
+   - "루트 사용자" 선택
+   - 생성한 이메일 주소와 암호로 로그인
+
+2. **Console 홈 화면 확인**
+   ```
+   🎯 확인 포인트:
+   - 상단 네비게이션 바 확인
+   - 리전 선택기 위치 확인 (우측 상단)
+   - 서비스 검색 바 확인
+   - 최근 방문한 서비스 섹션 확인
+   ```
+
+### 2.2 리전 설정
+
+1. **현재 리전 확인**
+   - 우측 상단 리전 표시 확인 (예: "미국 동부(버지니아 북부) us-east-1")
+
+2. **서울 리전으로 변경**
+   - 리전 드롭다운 클릭
+   - "아시아 태평양(서울) ap-northeast-2" 선택
+   - 페이지 새로고침 확인
+
+   ```
+   💡 팁: 한국 사용자는 서울 리전 사용 권장
+   - 낮은 지연시간
+   - 한국어 지원
+   - 데이터 주권 준수
+   ```
+
+### 2.3 서비스 탐색
+
+1. **서비스 메뉴 탐색**
+   - 좌측 상단 "서비스" 메뉴 클릭
+   - 카테고리별 서비스 분류 확인:
+     - 컴퓨팅 (EC2, Lambda 등)
+     - 스토리지 (S3, EBS 등)
+     - 데이터베이스 (RDS, DynamoDB 등)
+     - 네트워킹 및 콘텐츠 전송 (VPC, CloudFront 등)
+
+2. **서비스 검색 사용**
+   - 상단 검색 바에 "EC2" 입력
+   - 검색 결과에서 "EC2" 클릭
+   - EC2 대시보드 화면 확인
+
+3. **즐겨찾기 설정**
+   - 자주 사용할 서비스를 즐겨찾기에 추가
+   - 서비스 이름 옆 별표 아이콘 클릭
+
+## 실습 3: 보안 설정
+
+### 3.1 루트 계정 보안 강화
+
+1. **MFA(다단계 인증) 설정**
+   - 우측 상단 계정 이름 클릭
+   - "보안 자격 증명" 선택
+   - "다단계 인증(MFA)" 섹션에서 "MFA 활성화" 클릭
+
+2. **가상 MFA 디바이스 설정**
+   - "가상 MFA 디바이스" 선택
+   - 스마트폰에 Google Authenticator 또는 Authy 앱 설치
+   - QR 코드 스캔 후 연속된 두 개의 MFA 코드 입력
+
+   ```
+   🔐 보안 팁:
+   - 루트 계정은 일상적인 작업에 사용하지 않기
+   - MFA는 보안의 필수 요소
+   - 백업 코드 안전한 곳에 보관
+   ```
+
+### 3.2 IAM 사용자 생성 (다음 실습 예고)
+
+```
+📋 다음 실습 예고:
+Day 2에서는 IAM을 통해 일상적인 작업용 사용자를 생성하고
+루트 계정 사용을 최소화하는 방법을 학습합니다.
 ```
 
-## 실습 완료 후 확인사항
+## 실습 4: 결제 및 비용 관리 설정
 
-- [ ] AWS 계정 정보가 올바르게 출력되었는가?
-- [ ] 현재 리전의 가용 영역이 표시되었는가?
-- [ ] IAM 사용자 정보가 확인되었는가?
-- [ ] 보안 권장사항을 검토했는가?
-- [ ] 설정 보고서 파일이 생성되었는가?
+### 4.1 결제 대시보드 확인
 
-## 다음 단계
+1. **결제 콘솔 접속**
+   - 우측 상단 계정 이름 클릭
+   - "결제 대시보드" 선택
 
-1. **MFA 설정**: IAM 사용자에 다중 인증 활성화
-2. **결제 알림 설정**: 예상치 못한 비용 방지
-3. **CloudTrail 활성화**: API 호출 로깅
-4. **Day 2 학습 준비**: IAM 심화 학습
+2. **현재 사용량 확인**
+   ```
+   📊 확인 항목:
+   - 이번 달 예상 요금
+   - 서비스별 사용량
+   - Free Tier 사용 현황
+   ```
 
-## 추가 리소스
+### 4.2 결제 알림 설정
 
-- [AWS 계정 설정 가이드](https://docs.aws.amazon.com/accounts/latest/reference/manage-acct-creating.html)
-- [AWS CLI 구성 가이드](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
-- [IAM 모범 사례](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html)
-- [AWS 프리 티어](https://aws.amazon.com/free/)
+1. **결제 기본 설정**
+   - 좌측 메뉴에서 "결제 기본 설정" 클릭
+   - "결제 알림 수신" 체크박스 활성화
+
+2. **CloudWatch를 통한 결제 알림 생성**
+   - 서비스 검색에서 "CloudWatch" 입력
+   - CloudWatch 콘솔로 이동
+   - 좌측 메뉴에서 "경보" → "결제" 선택
+
+3. **결제 경보 생성**
+   ```
+   ⚙️ 경보 설정:
+   - 임계값: $5 (또는 원하는 금액)
+   - 비교 연산자: 보다 큰
+   - 알림 방법: 이메일
+   - 경보 이름: "월간-결제-알림"
+   ```
+
+### 4.3 Free Tier 사용량 모니터링
+
+1. **Free Tier 대시보드 접속**
+   - 결제 콘솔에서 "Free Tier" 메뉴 클릭
+
+2. **Free Tier 한도 확인**
+   ```
+   📈 주요 Free Tier 한도:
+   - EC2: 750시간/월 (t2.micro 또는 t3.micro)
+   - S3: 5GB 스토리지, 20,000 GET 요청, 2,000 PUT 요청
+   - RDS: 750시간/월 (db.t2.micro 또는 db.t3.micro)
+   - Lambda: 1백만 요청/월, 400,000 GB-초
+   ```
+
+3. **사용량 추적 설정**
+   - "사용량 추적" 활성화
+   - 80% 도달 시 이메일 알림 설정
+
+## 실습 5: AWS CLI 설치 및 설정 (선택사항)
+
+### 5.1 AWS CLI 설치
+
+1. **Windows 사용자**
+   ```powershell
+   # PowerShell에서 실행
+   msiexec.exe /i https://awscli.amazonaws.com/AWSCLIV2.msi
+   ```
+
+2. **macOS 사용자**
+   ```bash
+   # Terminal에서 실행
+   curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+   sudo installer -pkg AWSCLIV2.pkg -target /
+   ```
+
+3. **Linux 사용자**
+   ```bash
+   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+   unzip awscliv2.zip
+   sudo ./aws/install
+   ```
+
+### 5.2 설치 확인
+
+```bash
+# 설치 확인
+aws --version
+
+# 예상 출력: aws-cli/2.x.x Python/3.x.x ...
+```
+
+### 5.3 액세스 키 생성 (주의사항)
+
+```
+⚠️ 보안 주의사항:
+루트 계정의 액세스 키는 생성하지 않는 것을 강력히 권장합니다.
+Day 2 IAM 실습에서 안전한 방법으로 CLI 설정을 진행합니다.
+```
+
+## 실습 6: 기본 서비스 둘러보기
+
+### 6.1 EC2 대시보드 탐색
+
+1. **EC2 콘솔 접속**
+   - 서비스 검색에서 "EC2" 입력
+   - EC2 대시보드로 이동
+
+2. **대시보드 구성 요소 확인**
+   ```
+   🖥️ EC2 대시보드 구성:
+   - 리소스 요약 (인스턴스, 볼륨, 보안 그룹 등)
+   - 서비스 상태
+   - 계정 속성
+   - 추가 정보 및 링크
+   ```
+
+### 6.2 S3 콘솔 탐색
+
+1. **S3 콘솔 접속**
+   - 서비스 검색에서 "S3" 입력
+   - S3 콘솔로 이동
+
+2. **S3 기본 개념 확인**
+   ```
+   🪣 S3 주요 개념:
+   - 버킷: 객체를 저장하는 컨테이너
+   - 객체: 실제 파일 데이터
+   - 키: 객체의 고유 식별자
+   - 리전: 버킷이 생성되는 지리적 위치
+   ```
+
+### 6.3 VPC 콘솔 탐색
+
+1. **VPC 콘솔 접속**
+   - 서비스 검색에서 "VPC" 입력
+   - VPC 대시보드로 이동
+
+2. **기본 VPC 확인**
+   ```
+   🌐 기본 VPC 구성:
+   - 각 리전마다 기본 VPC 자동 생성
+   - 기본 서브넷, 인터넷 게이트웨이, 라우팅 테이블 포함
+   - 즉시 사용 가능한 네트워크 환경 제공
+   ```
+
+## 실습 완료 체크리스트
+
+### ✅ 필수 완료 항목
+- [ ] AWS 계정 생성 완료
+- [ ] 이메일 및 전화번호 인증 완료
+- [ ] 결제 정보 등록 완료
+- [ ] AWS Management Console 로그인 성공
+- [ ] 서울 리전(ap-northeast-2) 설정 완료
+- [ ] MFA(다단계 인증) 설정 완료
+- [ ] 결제 알림 설정 완료
+- [ ] Free Tier 사용량 모니터링 설정 완료
+
+### ✅ 선택 완료 항목
+- [ ] AWS CLI 설치 완료
+- [ ] 주요 서비스 콘솔 탐색 완료
+- [ ] 즐겨찾기 서비스 설정 완료
+
+## 문제 해결 가이드
+
+### 자주 발생하는 문제
+
+1. **계정 생성 시 신용카드 인증 실패**
+   ```
+   해결 방법:
+   - 해외 결제 가능한 카드인지 확인
+   - 카드사에 해외 결제 승인 요청
+   - 다른 카드로 재시도
+   ```
+
+2. **전화 인증 실패**
+   ```
+   해결 방법:
+   - 국가 코드 정확히 입력 (+82)
+   - 휴대폰 번호에서 첫 번째 0 제거
+   - 통화 품질이 좋은 환경에서 재시도
+   ```
+
+3. **MFA 설정 오류**
+   ```
+   해결 방법:
+   - 스마트폰 시간 동기화 확인
+   - 인증 앱 재설치 후 재시도
+   - 연속된 두 개의 코드 정확히 입력
+   ```
+
+4. **리전 변경 후 서비스 안 보임**
+   ```
+   해결 방법:
+   - 일부 서비스는 글로벌 서비스 (IAM, Route 53 등)
+   - 리전별 서비스는 해당 리전에서만 표시
+   - 올바른 리전 선택 확인
+   ```
+
+## 다음 실습 준비사항
+
+### Day 2 실습 준비
+```
+📚 다음 실습 주제: IAM (Identity and Access Management)
+🎯 준비사항:
+- 오늘 생성한 AWS 계정
+- MFA가 설정된 루트 계정
+- AWS Management Console 접속 가능 상태
+```
+
+### 추가 학습 자료
+- [AWS 계정 생성 공식 가이드](https://docs.aws.amazon.com/accounts/latest/reference/manage-acct-creating.html)
+- [AWS Free Tier 상세 정보](https://aws.amazon.com/free/)
+- [AWS 보안 모범 사례](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html)
+
+---
+
+**실습 완료 시간**: 약 45분  
+**난이도**: 초급  
+**비용**: 무료 (Free Tier 범위 내)
+
+**🎉 축하합니다! AWS 계정 설정과 기본 Console 탐색을 완료했습니다.**

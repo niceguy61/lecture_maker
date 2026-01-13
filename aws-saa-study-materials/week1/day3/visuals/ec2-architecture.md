@@ -1,556 +1,483 @@
 # EC2 아키텍처 시각화 자료
 
-## 1. EC2 전체 아키텍처 개요
+## EC2 서비스 아키텍처 다이어그램
+
+### 1. EC2 전체 아키텍처 개요
 
 ```mermaid
 graph TB
-    subgraph "AWS Cloud"
-        subgraph "Region: us-east-1"
-            subgraph "Availability Zone A"
+    subgraph "AWS 클라우드"
+        subgraph "리전 (Region)"
+            subgraph "가용 영역 A (AZ-A)"
                 subgraph "VPC"
-                    subgraph "Public Subnet"
-                        EC2A[EC2 Instance A<br/>Web Server]
-                        SGA[Security Group A<br/>HTTP/HTTPS/SSH]
+                    subgraph "퍼블릭 서브넷"
+                        EC2A[EC2 인스턴스]
+                        ELB[로드 밸런서]
                     end
-                    subgraph "Private Subnet"
-                        EC2B[EC2 Instance B<br/>Database Server]
-                        SGB[Security Group B<br/>MySQL/SSH]
+                    subgraph "프라이빗 서브넷"
+                        EC2B[EC2 인스턴스]
+                        RDS[RDS 데이터베이스]
                     end
                 end
+                EBS1[EBS 볼륨]
             end
             
-            subgraph "Availability Zone B"
+            subgraph "가용 영역 B (AZ-B)"
                 subgraph "VPC2"
-                    subgraph "Public Subnet 2"
-                        EC2C[EC2 Instance C<br/>Web Server]
-                        SGC[Security Group C<br/>HTTP/HTTPS/SSH]
+                    subgraph "퍼블릭 서브넷2"
+                        EC2C[EC2 인스턴스]
+                    end
+                    subgraph "프라이빗 서브넷2"
+                        EC2D[EC2 인스턴스]
                     end
                 end
+                EBS2[EBS 볼륨]
             end
         end
-        
-        subgraph "AWS Services"
-            AMI[AMI Repository<br/>Amazon Machine Images]
-            EBS[EBS Volumes<br/>Persistent Storage]
-            CW[CloudWatch<br/>Monitoring]
-        end
     end
     
-    subgraph "Internet"
-        USER[Users]
-        ADMIN[Administrator]
+    subgraph "사용자"
+        USER[인터넷 사용자]
+        ADMIN[시스템 관리자]
     end
     
-    USER --> EC2A
-    USER --> EC2C
-    ADMIN --> EC2A
-    ADMIN --> EC2B
-    ADMIN --> EC2C
-    
+    USER --> ELB
+    ELB --> EC2A
+    ELB --> EC2C
     EC2A --> EC2B
-    EC2A --> EBS
-    EC2B --> EBS
-    EC2C --> EBS
+    EC2C --> EC2D
+    EC2B --> RDS
+    EC2D --> RDS
     
-    AMI --> EC2A
-    AMI --> EC2B
-    AMI --> EC2C
+    ADMIN --> |SSH/RDP| EC2A
+    ADMIN --> |SSH/RDP| EC2C
     
-    EC2A --> CW
-    EC2B --> CW
-    EC2C --> CW
-    
-    style EC2A fill:#e1f5fe
-    style EC2B fill:#f3e5f5
-    style EC2C fill:#e1f5fe
-    style AMI fill:#fff3e0
-    style EBS fill:#e8f5e8
-    style CW fill:#fce4ec
+    EC2A --> EBS1
+    EC2B --> EBS1
+    EC2C --> EBS2
+    EC2D --> EBS2
 ```
 
-## 2. EC2 인스턴스 구성 요소
+### 2. EC2 인스턴스 유형별 특성
 
 ```mermaid
-graph LR
-    subgraph "EC2 Instance"
-        subgraph "Compute"
-            CPU[vCPU<br/>Virtual Processors]
-            MEM[Memory<br/>RAM]
-            NET[Network<br/>Performance]
-        end
-        
-        subgraph "Storage"
-            ROOT[Root Volume<br/>EBS/Instance Store]
-            ADD[Additional Volumes<br/>EBS]
-        end
-        
-        subgraph "Network"
-            ENI[Elastic Network Interface]
-            PIP[Public IP<br/>Dynamic/Elastic]
-            PRIP[Private IP<br/>VPC Internal]
-        end
-        
-        subgraph "Security"
-            SG[Security Groups<br/>Virtual Firewall]
-            KP[Key Pairs<br/>SSH/RDP Access]
-        end
-    end
-    
-    subgraph "Instance Type"
-        FAMILY[Instance Family<br/>t3, m5, c5, r5, etc.]
-        SIZE[Instance Size<br/>nano, micro, small, large, etc.]
-    end
-    
-    FAMILY --> CPU
-    FAMILY --> MEM
-    FAMILY --> NET
-    SIZE --> CPU
-    SIZE --> MEM
-    
-    style CPU fill:#ffcdd2
-    style MEM fill:#c8e6c9
-    style NET fill:#bbdefb
-    style ROOT fill:#fff9c4
-    style SG fill:#f8bbd9
+mindmap
+  root((EC2 인스턴스 유형))
+    범용 (General Purpose)
+      T3/T4g
+        버스터블 성능
+        웹 서버
+        소규모 DB
+        개발 환경
+      M5/M6i
+        균형잡힌 성능
+        웹 애플리케이션
+        마이크로서비스
+        엔터프라이즈 앱
+    컴퓨팅 최적화 (Compute)
+      C5/C6i
+        고성능 CPU
+        과학 계산
+        게임 서버
+        HPC
+    메모리 최적화 (Memory)
+      R5/R6i
+        고메모리
+        인메모리 DB
+        빅데이터 분석
+        캐싱
+      X1e
+        초고메모리
+        SAP HANA
+        Apache Spark
+    스토리지 최적화 (Storage)
+      I3/I4i
+        고속 SSD
+        NoSQL DB
+        분산 파일시스템
+      D2/D3
+        고밀도 HDD
+        분산 스토리지
+        데이터 웨어하우스
+    가속 컴퓨팅 (Accelerated)
+      P3/P4
+        GPU ML/AI
+        머신러닝 훈련
+        HPC
+      G4
+        GPU 그래픽
+        게임 스트리밍
+        비디오 처리
 ```
 
-## 3. 인스턴스 타입 패밀리 비교
-
-```mermaid
-graph TD
-    subgraph "Instance Type Families"
-        subgraph "General Purpose"
-            T3[t3 Family<br/>Burstable Performance<br/>웹 서버, 소규모 DB]
-            M5[m5 Family<br/>Balanced Compute<br/>웹 애플리케이션, 마이크로서비스]
-        end
-        
-        subgraph "Compute Optimized"
-            C5[c5 Family<br/>High Performance CPU<br/>과학 계산, 게임 서버]
-        end
-        
-        subgraph "Memory Optimized"
-            R5[r5 Family<br/>Memory Intensive<br/>인메모리 DB, 빅데이터]
-            X1[x1 Family<br/>High Memory<br/>Apache Spark, 대용량 DB]
-        end
-        
-        subgraph "Storage Optimized"
-            I3[i3 Family<br/>High Sequential R/W<br/>분산 파일시스템, 데이터웨어하우스]
-        end
-        
-        subgraph "Accelerated Computing"
-            P3[p3 Family<br/>GPU Instances<br/>머신러닝, HPC]
-        end
-    end
-    
-    subgraph "Use Cases"
-        WEB[Web Applications]
-        DB[Databases]
-        ML[Machine Learning]
-        GAME[Gaming]
-        ANALYTICS[Analytics]
-    end
-    
-    T3 --> WEB
-    M5 --> WEB
-    C5 --> GAME
-    R5 --> DB
-    X1 --> DB
-    I3 --> ANALYTICS
-    P3 --> ML
-    
-    style T3 fill:#e3f2fd
-    style M5 fill:#e8f5e8
-    style C5 fill:#fff3e0
-    style R5 fill:#fce4ec
-    style X1 fill:#f3e5f5
-    style I3 fill:#e0f2f1
-    style P3 fill:#fff8e1
-```
-
-## 4. EC2 인스턴스 생명주기
+### 3. EC2 인스턴스 생명주기
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Pending : Launch Instance
-    Pending --> Running : Boot Complete
-    Running --> Stopping : Stop Instance
-    Stopping --> Stopped : Stop Complete
-    Stopped --> Pending : Start Instance
-    Running --> Rebooting : Reboot Instance
-    Rebooting --> Running : Reboot Complete
-    Running --> ShuttingDown : Terminate Instance
-    Stopped --> ShuttingDown : Terminate Instance
-    ShuttingDown --> Terminated : Termination Complete
+    [*] --> Pending: 인스턴스 시작<br/>(Launch Instance)
+    
+    Pending --> Running: 부팅 완료<br/>(Boot Complete)
+    
+    Running --> Stopping: 중지 요청<br/>(Stop Instance)
+    Running --> Shutting_down: 종료 요청<br/>(Terminate Instance)
+    Running --> Rebooting: 재부팅<br/>(Reboot Instance)
+    
+    Stopping --> Stopped: 중지 완료<br/>(Stop Complete)
+    
+    Stopped --> Pending: 재시작<br/>(Start Instance)
+    Stopped --> Shutting_down: 종료 요청<br/>(Terminate Instance)
+    
+    Shutting_down --> Terminated: 종료 완료<br/>(Terminate Complete)
+    
+    Rebooting --> Running: 재부팅 완료<br/>(Reboot Complete)
+    
     Terminated --> [*]
     
     note right of Pending
-        인스턴스 시작 중
-        하드웨어 할당
-        부팅 프로세스
+        - 하드웨어 할당
+        - 부팅 과정
+        - 요금 부과 시작
     end note
     
     note right of Running
-        정상 실행 상태
-        애플리케이션 서비스
-        과금 진행 중
+        - 정상 작동
+        - SSH/RDP 접속 가능
+        - 애플리케이션 실행
     end note
     
     note right of Stopped
-        인스턴스 중지
-        EBS 데이터 보존
-        과금 중지 (EBS 제외)
+        - 컴퓨팅 요금 중단
+        - EBS 볼륨 유지
+        - 퍼블릭 IP 해제
     end note
     
     note right of Terminated
-        완전 삭제
-        모든 데이터 손실
-        복구 불가능
+        - 인스턴스 완전 삭제
+        - 인스턴스 스토어 손실
+        - EBS 루트 볼륨 삭제
     end note
 ```
 
-## 5. 보안 그룹 아키텍처
+### 4. 보안 그룹 작동 원리
 
 ```mermaid
-graph TB
-    subgraph "Internet"
-        USER[Internet Users]
-        ADMIN[System Admin]
+graph LR
+    subgraph "인터넷"
+        INTERNET[인터넷 사용자<br/>🌐]
+        ADMIN[관리자<br/>👨‍💻]
     end
     
-    subgraph "VPC"
-        subgraph "Public Subnet"
-            subgraph "Web Server"
-                WEB[EC2 Web Instance]
-                WEBSG[Web Security Group]
+    subgraph "AWS VPC"
+        subgraph "보안 그룹 (Security Group)"
+            direction TB
+            INBOUND[인바운드 규칙<br/>📥]
+            OUTBOUND[아웃바운드 규칙<br/>📤]
+            
+            subgraph "인바운드 규칙 예시"
+                HTTP[HTTP: 80<br/>Source: 0.0.0.0/0]
+                HTTPS[HTTPS: 443<br/>Source: 0.0.0.0/0]
+                SSH[SSH: 22<br/>Source: My IP]
+            end
+            
+            subgraph "아웃바운드 규칙"
+                ALL_OUT[All Traffic<br/>Destination: 0.0.0.0/0]
             end
         end
         
-        subgraph "Private Subnet"
-            subgraph "Database Server"
-                DB[EC2 DB Instance]
-                DBSG[DB Security Group]
-            end
+        subgraph "EC2 인스턴스"
+            WEB[웹 서버<br/>🖥️<br/>포트 80, 443]
         end
     end
     
-    USER -->|HTTP:80<br/>HTTPS:443| WEBSG
-    ADMIN -->|SSH:22<br/>Source: Admin IP| WEBSG
-    WEBSG --> WEB
+    INTERNET --> |HTTP/HTTPS 요청| HTTP
+    INTERNET --> |HTTP/HTTPS 요청| HTTPS
+    ADMIN --> |SSH 접속| SSH
     
-    WEB -->|MySQL:3306<br/>Source: Web SG| DBSG
-    ADMIN -->|SSH:22<br/>Source: Admin IP| DBSG
-    DBSG --> DB
+    HTTP --> WEB
+    HTTPS --> WEB
+    SSH --> WEB
     
-    subgraph "Security Group Rules"
-        subgraph "Web SG Rules"
-            WEBIN[Inbound Rules:<br/>HTTP: 0.0.0.0/0<br/>HTTPS: 0.0.0.0/0<br/>SSH: Admin IP]
-            WEBOUT[Outbound Rules:<br/>All Traffic: 0.0.0.0/0]
-        end
-        
-        subgraph "DB SG Rules"
-            DBIN[Inbound Rules:<br/>MySQL: Web SG<br/>SSH: Admin IP]
-            DBOUT[Outbound Rules:<br/>All Traffic: 0.0.0.0/0]
-        end
-    end
+    WEB --> |모든 아웃바운드| ALL_OUT
+    ALL_OUT --> INTERNET
     
-    style WEBSG fill:#e3f2fd
-    style DBSG fill:#fce4ec
-    style WEBIN fill:#e8f5e8
-    style DBIN fill:#fff3e0
+    style INBOUND fill:#e1f5fe
+    style OUTBOUND fill:#f3e5f5
+    style WEB fill:#e8f5e8
 ```
 
-## 6. AMI (Amazon Machine Image) 구조
-
-```mermaid
-graph TD
-    subgraph "AMI Components"
-        subgraph "Root Volume Template"
-            OS[Operating System<br/>Linux/Windows]
-            APP[Pre-installed Applications<br/>Web Server, Database, etc.]
-            CONFIG[System Configuration<br/>Users, Settings, etc.]
-        end
-        
-        subgraph "Block Device Mapping"
-            ROOT_MAP[Root Device Mapping<br/>/dev/sda1 or /dev/xvda]
-            ADD_MAP[Additional Volume Mapping<br/>/dev/sdb, /dev/sdc, etc.]
-        end
-        
-        subgraph "Permissions"
-            OWNER[Owner Permissions<br/>Private/Public/Shared]
-            LAUNCH[Launch Permissions<br/>Specific AWS Accounts]
-        end
-    end
-    
-    subgraph "AMI Types"
-        subgraph "By Root Device"
-            EBS_AMI[EBS-backed AMI<br/>Persistent Storage<br/>Fast Boot]
-            STORE_AMI[Instance Store AMI<br/>Temporary Storage<br/>Lower Cost]
-        end
-        
-        subgraph "By Source"
-            AWS_AMI[AWS Provided<br/>Amazon Linux, Ubuntu]
-            MARKET_AMI[AWS Marketplace<br/>Commercial Software]
-            COMMUNITY_AMI[Community AMI<br/>User Shared]
-            CUSTOM_AMI[Custom AMI<br/>User Created]
-        end
-    end
-    
-    subgraph "Instance Launch"
-        LAUNCH_INST[Launch Instance]
-        SELECT_AMI[Select AMI]
-        BOOT[Boot Process]
-        RUNNING[Running Instance]
-    end
-    
-    OS --> EBS_AMI
-    APP --> EBS_AMI
-    CONFIG --> EBS_AMI
-    
-    EBS_AMI --> SELECT_AMI
-    AWS_AMI --> SELECT_AMI
-    MARKET_AMI --> SELECT_AMI
-    CUSTOM_AMI --> SELECT_AMI
-    
-    SELECT_AMI --> LAUNCH_INST
-    LAUNCH_INST --> BOOT
-    BOOT --> RUNNING
-    
-    style EBS_AMI fill:#e3f2fd
-    style AWS_AMI fill:#e8f5e8
-    style CUSTOM_AMI fill:#fff3e0
-```
-
-## 7. EC2 스토리지 옵션
+### 5. EC2 요금 모델 비교
 
 ```mermaid
 graph TB
-    subgraph "EC2 Instance"
-        INST[EC2 Instance]
-    end
-    
-    subgraph "Storage Options"
-        subgraph "Instance Store"
-            TEMP[Temporary Storage<br/>물리적으로 연결<br/>높은 I/O 성능<br/>인스턴스 종료시 삭제]
+    subgraph "EC2 요금 모델 비교"
+        subgraph "온디맨드 (On-Demand)"
+            OD[💰 시간당 과금<br/>📋 약정 없음<br/>⚡ 즉시 사용<br/>💸 가장 비쌈]
         end
         
-        subgraph "EBS (Elastic Block Store)"
-            GP3[gp3: General Purpose SSD<br/>3,000-16,000 IOPS<br/>125-1,000 MB/s]
-            GP2[gp2: General Purpose SSD<br/>Baseline 3 IOPS/GB<br/>Burst up to 3,000 IOPS]
-            IO2[io2: Provisioned IOPS SSD<br/>Up to 64,000 IOPS<br/>High durability]
-            ST1[st1: Throughput Optimized HDD<br/>500 IOPS<br/>500 MB/s throughput]
-            SC1[sc1: Cold HDD<br/>250 IOPS<br/>250 MB/s throughput]
+        subgraph "예약 인스턴스 (Reserved)"
+            RI[💰 1-3년 약정<br/>💸 최대 75% 할인<br/>📦 용량 예약<br/>📊 예측 가능한 워크로드]
         end
         
-        subgraph "EFS (Elastic File System)"
-            EFS[Network File System<br/>다중 인스턴스 공유<br/>자동 확장]
+        subgraph "스팟 인스턴스 (Spot)"
+            SI[💰 경매 방식<br/>💸 최대 90% 할인<br/>⚠️ 중단 가능<br/>🔄 내결함성 필요]
+        end
+        
+        subgraph "전용 호스트 (Dedicated)"
+            DH[💰 물리 서버 전용<br/>🔒 라이선스 최적화<br/>📋 규정 준수<br/>💸 가장 비쌈]
         end
     end
     
-    INST -.->|직접 연결| TEMP
-    INST -->|네트워크 연결| GP3
-    INST -->|네트워크 연결| GP2
-    INST -->|네트워크 연결| IO2
-    INST -->|네트워크 연결| ST1
-    INST -->|네트워크 연결| SC1
-    INST -->|NFS 마운트| EFS
-    
-    subgraph "Use Cases"
-        WEB_USE[웹 애플리케이션<br/>→ gp3/gp2]
-        DB_USE[고성능 데이터베이스<br/>→ io2]
-        BIG_DATA[빅데이터 처리<br/>→ st1]
-        ARCHIVE[아카이브<br/>→ sc1]
-        SHARED[공유 스토리지<br/>→ EFS]
+    subgraph "사용 시나리오"
+        OD --> OD_USE[개발/테스트<br/>예측 불가능한 워크로드<br/>단기 프로젝트]
+        RI --> RI_USE[프로덕션 환경<br/>안정적인 워크로드<br/>장기 운영]
+        SI --> SI_USE[배치 작업<br/>빅데이터 처리<br/>내결함성 애플리케이션]
+        DH --> DH_USE[라이선스 제약<br/>규정 준수<br/>보안 요구사항]
     end
     
-    GP3 -.-> WEB_USE
-    IO2 -.-> DB_USE
-    ST1 -.-> BIG_DATA
-    SC1 -.-> ARCHIVE
-    EFS -.-> SHARED
-    
-    style TEMP fill:#ffcdd2
-    style GP3 fill:#c8e6c9
-    style IO2 fill:#bbdefb
-    style ST1 fill:#fff9c4
-    style EFS fill:#f8bbd9
+    style OD fill:#ffebee
+    style RI fill:#e8f5e8
+    style SI fill:#fff3e0
+    style DH fill:#f3e5f5
 ```
 
-## 8. EC2 네트워킹 개념
+### 6. EC2 모니터링 아키텍처
 
 ```mermaid
 graph TB
-    subgraph "Internet"
-        IGW[Internet Gateway]
-    end
-    
-    subgraph "VPC (10.0.0.0/16)"
-        subgraph "Public Subnet (10.0.1.0/24)"
-            EC2_PUB[EC2 Public Instance<br/>Private IP: 10.0.1.10<br/>Public IP: 54.123.45.67]
-            EIP[Elastic IP<br/>52.123.45.89]
-        end
-        
-        subgraph "Private Subnet (10.0.2.0/24)"
-            EC2_PRIV[EC2 Private Instance<br/>Private IP: 10.0.2.10<br/>No Public IP]
-        end
-        
-        subgraph "Network Components"
-            RT_PUB[Public Route Table<br/>0.0.0.0/0 → IGW]
-            RT_PRIV[Private Route Table<br/>10.0.0.0/16 → Local]
-            NACL[Network ACL<br/>Subnet Level Firewall]
-        end
-    end
-    
-    IGW <--> EC2_PUB
-    EIP -.-> EC2_PUB
-    EC2_PUB <--> EC2_PRIV
-    
-    RT_PUB --> EC2_PUB
-    RT_PRIV --> EC2_PRIV
-    NACL --> EC2_PUB
-    NACL --> EC2_PRIV
-    
-    subgraph "IP Address Types"
-        PRIV_IP[Private IP<br/>• VPC 내부 통신<br/>• 인스턴스 재시작시 유지<br/>• 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]
-        PUB_IP[Public IP<br/>• 인터넷 통신<br/>• 인스턴스 재시작시 변경<br/>• 동적 할당]
-        ELASTIC_IP[Elastic IP<br/>• 고정 퍼블릭 IP<br/>• 인스턴스간 이동 가능<br/>• 사용하지 않으면 과금]
-    end
-    
-    style EC2_PUB fill:#e3f2fd
-    style EC2_PRIV fill:#fce4ec
-    style EIP fill:#fff3e0
-    style PRIV_IP fill:#e8f5e8
-    style PUB_IP fill:#f3e5f5
-    style ELASTIC_IP fill:#fff8e1
-```
-
-## 9. EC2 모니터링 아키텍처
-
-```mermaid
-graph TB
-    subgraph "EC2 Instances"
-        EC2_1[EC2 Instance 1]
-        EC2_2[EC2 Instance 2]
-        EC2_3[EC2 Instance 3]
+    subgraph "EC2 인스턴스"
+        APP[애플리케이션<br/>🚀]
+        OS[운영체제<br/>🖥️]
+        META[메타데이터 서비스<br/>169.254.169.254]
     end
     
     subgraph "CloudWatch"
-        subgraph "Basic Monitoring (5분 간격)"
-            CPU_UTIL[CPU Utilization]
-            NET_IN[Network In]
-            NET_OUT[Network Out]
-            DISK_READ[Disk Read Ops]
-            DISK_WRITE[Disk Write Ops]
-        end
-        
-        subgraph "Detailed Monitoring (1분 간격)"
-            DETAILED[상세 메트릭<br/>추가 비용 발생]
-        end
-        
-        subgraph "Custom Metrics"
-            MEMORY[Memory Usage<br/>CloudWatch Agent]
-            DISK_SPACE[Disk Space<br/>CloudWatch Agent]
-            APP_METRICS[Application Metrics<br/>Custom Scripts]
-        end
+        METRICS[메트릭 수집<br/>📊]
+        ALARMS[알람<br/>🚨]
+        DASHBOARD[대시보드<br/>📈]
+        LOGS[로그<br/>📝]
     end
     
-    subgraph "Health Checks"
-        SYS_CHECK[System Status Check<br/>AWS 인프라 문제]
-        INST_CHECK[Instance Status Check<br/>인스턴스 소프트웨어 문제]
+    subgraph "기본 메트릭 (5분 간격)"
+        CPU[CPU 사용률<br/>💻]
+        NETWORK[네트워크 I/O<br/>🌐]
+        DISK[디스크 I/O<br/>💾]
     end
     
-    subgraph "Alarms & Actions"
-        ALARM[CloudWatch Alarms]
-        SNS[SNS Notifications]
-        AUTO_SCALE[Auto Scaling Actions]
-        EC2_ACTION[EC2 Actions<br/>Stop/Terminate/Reboot]
+    subgraph "상세 모니터링 (1분 간격)"
+        DETAILED[상세 메트릭<br/>⏱️<br/>추가 비용]
     end
     
-    EC2_1 --> CPU_UTIL
-    EC2_1 --> NET_IN
-    EC2_1 --> DISK_READ
-    EC2_2 --> CPU_UTIL
-    EC2_3 --> CPU_UTIL
+    subgraph "사용자 액션"
+        ADMIN[관리자<br/>👨‍💻]
+        AUTO[Auto Scaling<br/>🔄]
+    end
     
-    EC2_1 --> SYS_CHECK
-    EC2_1 --> INST_CHECK
+    OS --> METRICS
+    APP --> LOGS
     
-    CPU_UTIL --> ALARM
-    MEMORY --> ALARM
-    SYS_CHECK --> ALARM
+    METRICS --> CPU
+    METRICS --> NETWORK
+    METRICS --> DISK
+    METRICS --> DETAILED
     
-    ALARM --> SNS
-    ALARM --> AUTO_SCALE
-    ALARM --> EC2_ACTION
+    METRICS --> ALARMS
+    METRICS --> DASHBOARD
     
-    style CPU_UTIL fill:#e3f2fd
-    style MEMORY fill:#e8f5e8
-    style ALARM fill:#ffcdd2
-    style SNS fill:#fff3e0
+    ALARMS --> ADMIN
+    ALARMS --> AUTO
+    
+    APP --> |HTTP 요청| META
+    META --> |인스턴스 정보| APP
+    
+    style METRICS fill:#e3f2fd
+    style ALARMS fill:#ffebee
+    style DASHBOARD fill:#e8f5e8
 ```
 
-## 10. EC2 비용 최적화 전략
+### 7. 키 페어 인증 과정
 
 ```mermaid
-graph TD
-    subgraph "구매 옵션별 비용 비교"
-        subgraph "On-Demand"
-            OD[온디맨드<br/>100% 비용<br/>유연성 최대]
+sequenceDiagram
+    participant User as 사용자 👨‍💻
+    participant AWS as AWS 콘솔 ☁️
+    participant EC2 as EC2 인스턴스 🖥️
+    participant SSH as SSH 클라이언트 🔐
+    
+    Note over User,EC2: 키 페어 생성 과정
+    User->>AWS: 키 페어 생성 요청
+    AWS->>User: 프라이빗 키 (.pem) 다운로드
+    AWS->>EC2: 퍼블릭 키 설치 (authorized_keys)
+    
+    Note over User,EC2: 인스턴스 시작
+    User->>AWS: 인스턴스 시작 (키 페어 지정)
+    AWS->>EC2: 인스턴스 생성 및 퍼블릭 키 설치
+    
+    Note over User,EC2: SSH 연결 과정
+    User->>SSH: ssh -i private_key.pem ec2-user@public-ip
+    SSH->>EC2: 연결 시도 (프라이빗 키 사용)
+    EC2->>SSH: 퍼블릭 키로 검증
+    SSH->>User: 인증 성공, 셸 접속
+    
+    Note over User,EC2: 보안 고려사항
+    Note right of User: - 프라이빗 키 안전 보관<br/>- 적절한 권한 설정 (chmod 400)<br/>- 키 공유 금지<br/>- 정기적 키 교체
+```
+
+### 8. EC2 배치 전략
+
+```mermaid
+graph TB
+    subgraph "배치 그룹 (Placement Groups)"
+        subgraph "클러스터 (Cluster)"
+            CLUSTER[🔗 클러스터 배치<br/>- 저지연, 고대역폭<br/>- 단일 AZ<br/>- HPC 워크로드]
         end
         
-        subgraph "Reserved Instances"
-            RI_1Y[1년 예약<br/>~30% 할인<br/>중간 약정]
-            RI_3Y[3년 예약<br/>~50% 할인<br/>장기 약정]
+        subgraph "파티션 (Partition)"
+            PARTITION[📦 파티션 배치<br/>- 대규모 분산 워크로드<br/>- 하드웨어 장애 격리<br/>- Hadoop, Cassandra]
         end
         
-        subgraph "Spot Instances"
-            SPOT[스팟 인스턴스<br/>~90% 할인<br/>중단 가능성]
-        end
-        
-        subgraph "Savings Plans"
-            SP_COMPUTE[Compute Savings Plans<br/>~66% 할인<br/>유연한 사용]
-            SP_EC2[EC2 Instance Savings Plans<br/>~72% 할인<br/>특정 패밀리]
+        subgraph "스프레드 (Spread)"
+            SPREAD[🌐 스프레드 배치<br/>- 고가용성<br/>- 서로 다른 하드웨어<br/>- 중요한 인스턴스들]
         end
     end
     
-    subgraph "최적화 전략"
-        subgraph "Right Sizing"
-            MONITOR[모니터링<br/>CPU, 메모리 사용률 확인]
-            RESIZE[크기 조정<br/>과소/과대 사용 인스턴스 조정]
+    subgraph "가용 영역 A"
+        subgraph "랙 1"
+            C1[인스턴스 1]
+            C2[인스턴스 2]
         end
-        
-        subgraph "Scheduling"
-            AUTO_STOP[자동 중지<br/>업무 시간 외 중지]
-            SCHEDULE[스케줄링<br/>개발/테스트 환경 관리]
+        subgraph "랙 2"
+            P1[파티션 1<br/>인스턴스들]
         end
-        
-        subgraph "Storage Optimization"
-            EBS_OPT[EBS 최적화<br/>사용하지 않는 볼륨 삭제]
-            SNAPSHOT[스냅샷 관리<br/>오래된 스냅샷 정리]
+        subgraph "랙 3"
+            S1[인스턴스 A]
         end
     end
     
-    subgraph "비용 모니터링"
-        COST_EXPLORER[Cost Explorer<br/>비용 분석 및 예측]
-        BUDGET[AWS Budgets<br/>예산 설정 및 알림]
-        BILLING[Billing Dashboard<br/>실시간 비용 확인]
+    subgraph "가용 영역 B"
+        subgraph "랙 4"
+            P2[파티션 2<br/>인스턴스들]
+        end
+        subgraph "랙 5"
+            S2[인스턴스 B]
+        end
     end
     
-    OD --> MONITOR
-    RI_1Y --> MONITOR
-    SPOT --> AUTO_STOP
+    CLUSTER --> C1
+    CLUSTER --> C2
+    PARTITION --> P1
+    PARTITION --> P2
+    SPREAD --> S1
+    SPREAD --> S2
     
-    MONITOR --> COST_EXPLORER
-    RESIZE --> COST_EXPLORER
-    AUTO_STOP --> BUDGET
+    style CLUSTER fill:#e3f2fd
+    style PARTITION fill:#e8f5e8
+    style SPREAD fill:#fff3e0
+```
+
+### 9. EC2 네트워킹 개요
+
+```mermaid
+graph TB
+    subgraph "인터넷"
+        IGW[인터넷 게이트웨이<br/>🌐]
+    end
     
-    style OD fill:#ffcdd2
-    style RI_1Y fill:#c8e6c9
-    style RI_3Y fill:#a5d6a7
-    style SPOT fill:#bbdefb
-    style SP_COMPUTE fill:#fff3e0
-    style COST_EXPLORER fill:#f8bbd9
+    subgraph "VPC (Virtual Private Cloud)"
+        subgraph "퍼블릭 서브넷"
+            subgraph "EC2 인스턴스 (웹 서버)"
+                PUB_EC2[퍼블릭 IP: 54.180.1.1<br/>프라이빗 IP: 10.0.1.10<br/>🖥️]
+                SG_PUB[보안 그룹<br/>HTTP: 80 (0.0.0.0/0)<br/>SSH: 22 (My IP)]
+            end
+        end
+        
+        subgraph "프라이빗 서브넷"
+            subgraph "EC2 인스턴스 (앱 서버)"
+                PRIV_EC2[프라이빗 IP: 10.0.2.10<br/>🖥️]
+                SG_PRIV[보안 그룹<br/>App: 8080 (웹 서버 SG)<br/>SSH: 22 (Bastion)]
+            end
+        end
+        
+        subgraph "라우팅 테이블"
+            PUB_RT[퍼블릭 라우팅 테이블<br/>0.0.0.0/0 → IGW]
+            PRIV_RT[프라이빗 라우팅 테이블<br/>0.0.0.0/0 → NAT Gateway]
+        end
+        
+        NAT[NAT Gateway<br/>🔄]
+    end
+    
+    IGW --> PUB_EC2
+    PUB_EC2 --> PRIV_EC2
+    PRIV_EC2 --> NAT
+    NAT --> IGW
+    
+    PUB_RT --> PUB_EC2
+    PRIV_RT --> PRIV_EC2
+    
+    style PUB_EC2 fill:#e8f5e8
+    style PRIV_EC2 fill:#fff3e0
+    style SG_PUB fill:#e3f2fd
+    style SG_PRIV fill:#e3f2fd
+```
+
+### 10. EC2 스토리지 옵션
+
+```mermaid
+graph TB
+    subgraph "EC2 스토리지 옵션"
+        subgraph "EBS (Elastic Block Store)"
+            EBS_GP3[gp3 (범용 SSD)<br/>💾 균형잡힌 성능<br/>💰 비용 효율적]
+            EBS_IO2[io2 (프로비저닝된 IOPS)<br/>⚡ 고성능<br/>💸 높은 비용]
+            EBS_ST1[st1 (처리량 최적화 HDD)<br/>📊 빅데이터<br/>💰 저비용]
+            EBS_SC1[sc1 (콜드 HDD)<br/>❄️ 아카이브<br/>💰 최저비용]
+        end
+        
+        subgraph "인스턴스 스토어"
+            INSTANCE[인스턴스 스토어<br/>⚡ 최고 성능<br/>⚠️ 임시 스토리지<br/>💰 추가 비용 없음]
+        end
+        
+        subgraph "EFS (Elastic File System)"
+            EFS[EFS<br/>🌐 다중 인스턴스 공유<br/>📈 자동 확장<br/>💸 사용량 기반 과금]
+        end
+    end
+    
+    subgraph "EC2 인스턴스들"
+        EC2_1[EC2 인스턴스 1<br/>🖥️]
+        EC2_2[EC2 인스턴스 2<br/>🖥️]
+        EC2_3[EC2 인스턴스 3<br/>🖥️]
+    end
+    
+    EC2_1 --> EBS_GP3
+    EC2_1 --> INSTANCE
+    EC2_2 --> EBS_IO2
+    EC2_3 --> EBS_ST1
+    
+    EC2_1 --> EFS
+    EC2_2 --> EFS
+    EC2_3 --> EFS
+    
+    style EBS_GP3 fill:#e8f5e8
+    style EBS_IO2 fill:#ffebee
+    style INSTANCE fill:#fff3e0
+    style EFS fill:#e3f2fd
 ```
 
 ---
 
-이러한 시각화 자료들은 EC2의 복잡한 개념들을 이해하기 쉽게 도와줍니다. 각 다이어그램을 참고하여 EC2 아키텍처의 전체적인 구조와 세부 구성 요소들의 관계를 파악해보세요.
+## 시각화 자료 활용 가이드
+
+### 학습 순서
+1. **전체 아키텍처** → EC2의 전체적인 위치와 역할 이해
+2. **인스턴스 유형** → 워크로드별 최적 선택 기준 학습
+3. **생명주기** → 인스턴스 상태 관리 방법 이해
+4. **보안 그룹** → 네트워크 보안 설정 방법 학습
+5. **요금 모델** → 비용 최적화 전략 수립
+
+### 실습 연계
+- 각 다이어그램을 참조하여 실습 과정 이해
+- 문제 발생 시 해당 다이어그램으로 문제 지점 파악
+- 아키텍처 설계 시 참조 자료로 활용
+
+### 시험 준비
+- 각 다이어그램의 구성 요소와 관계 암기
+- 시나리오 문제 해결 시 시각적 사고 활용
+- 아키텍처 설계 문제에서 다이어그램 그리기 연습

@@ -44,9 +44,10 @@ aws-saa-study-materials/
 │   ├── README.md (주차 개요)
 │   ├── day1/
 │   │   ├── README.md (일일 학습 가이드)
-│   │   ├── theory.md (이론 내용)
-│   │   ├── visuals/ (시각화 자료)
-│   │   ├── hands-on/ (실습 자료)
+│   │   ├── theory.md (이론 내용 + 임베드된 시각화 자료)
+│   │   ├── hands-on/ (AWS Console 기반 실습 자료)
+│   │   │   ├── setup-guide.md (Console 실습 가이드)
+│   │   │   └── requirements.txt (서버리스 실습용, 필요시에만)
 │   │   └── quiz.md (일일 퀴즈)
 │   └── ... (day2-day7)
 ├── week2/ (동일 구조)
@@ -88,20 +89,20 @@ aws-saa-study-materials/
 ### 3. Hands-on Lab System
 
 **LabManager 클래스**
-- 역할: Python 기반 실습 환경 관리
+- 역할: AWS Console 기반 실습 환경 관리
 - 주요 메서드:
-  - `setup_lab_environment(requirements)`
-  - `generate_lab_instructions(aws_service, objectives)`
-  - `create_sample_code(service_type, complexity_level)`
+  - `setup_console_lab_guide(aws_service, objectives)`
+  - `generate_console_instructions(service_type, step_by_step=True)`
+  - `create_lambda_code_samples(function_type, complexity_level)`  # 서버리스 전용
 
 ### 4. Visual Content Generator
 
 **VisualizationEngine 클래스**
-- 역할: Mermaid, SVG 등 시각화 자료 생성
+- 역할: theory.md 파일에 직접 임베드되는 시각화 자료 생성
 - 주요 메서드:
-  - `create_mermaid_diagram(architecture_type, services)`
-  - `generate_svg_graphic(concept, style="educational")`
-  - `create_interactive_diagram(components, relationships)`
+  - `embed_mermaid_in_theory(architecture_type, services, theory_content)`
+  - `integrate_svg_graphics(concept, theory_section, style="educational")`
+  - `create_inline_diagrams(components, relationships, markdown_content)`
 
 ## Data Models
 
@@ -125,10 +126,11 @@ class DailyContent:
 class LabContent:
     title: str
     description: str
-    requirements: List[str]  # Python packages
-    setup_instructions: str
-    code_examples: List[str]
+    console_instructions: str  # AWS Console 단계별 가이드
+    screenshots_needed: List[str]  # 필요한 스크린샷 위치
+    lambda_code_examples: List[str]  # 서버리스 실습용 (필요시에만)
     exercises: List[str]
+    estimated_time: int  # minutes
     
 @dataclass
 class QuizContent:
@@ -207,24 +209,24 @@ class Question:
 *For any* folder in the system, it should provide clear navigation links and indexing information to related content
 **Validates: Requirements 1.4**
 
-### Property 5: Visual Materials Integration
-*For any* theoretical content, it should include appropriate visual materials using Mermaid diagrams or SVG graphics
-**Validates: Requirements 2.3**
+### Property 5: Visual Materials Integration in Theory
+*For any* theoretical content, it should include appropriate visual materials directly embedded using Mermaid diagrams or SVG graphics within the theory.md file
+**Validates: Requirements 2.3, 5.1, 5.3**
 
 ### Property 6: Exam Domain Coverage
 *For any* SAA-C03 exam domain, it should be represented in the curriculum with appropriate depth and coverage
 **Validates: Requirements 2.5**
 
-### Property 7: Python Lab Structure
-*For any* hands-on lab, it should contain Python scripts, requirements.txt file, and implementation guides
+### Property 7: Console-Based Lab Structure
+*For any* hands-on lab, it should contain AWS Console step-by-step guides and setup instructions
 **Validates: Requirements 3.1, 3.2, 3.3**
 
-### Property 8: Lab Code Completeness
-*For any* lab directory, it should include working code examples and templates that students can execute
+### Property 8: Lab Console Instructions Completeness
+*For any* lab directory, it should include detailed Console navigation guides that students can follow
 **Validates: Requirements 3.4**
 
-### Property 9: AWS Lab Setup Instructions
-*For any* lab that uses AWS services, it should provide clear setup instructions and prerequisites
+### Property 9: AWS Console Lab Setup Instructions
+*For any* lab that uses AWS services, it should provide clear Console-based setup instructions and prerequisites
 **Validates: Requirements 3.5**
 
 ### Property 10: Daily Quiz Question Count

@@ -2,79 +2,121 @@
 
 ## 학습 목표
 - AWS IAM의 핵심 개념과 구성 요소 이해
-- IAM 정책, 역할, 그룹의 차이점과 사용법 학습
-- 보안 모범 사례와 최소 권한 원칙 적용
-- IAM을 통한 AWS 리소스 접근 제어 방법 습득
+- 사용자, 그룹, 역할, 정책의 차이점과 사용법 학습
+- IAM 보안 모범 사례 적용
+- AWS 계정 보안 강화 방법 습득
 
 ## 1. IAM이란?
 
-AWS Identity and Access Management(IAM)는 AWS 서비스와 리소스에 대한 액세스를 안전하게 제어할 수 있는 웹 서비스입니다. 쉽게 말해, "누가 무엇을 할 수 있는지"를 관리하는 시스템이라고 생각하면 됩니다.
+AWS Identity and Access Management(IAM)는 AWS 리소스에 대한 액세스를 안전하게 제어할 수 있는 웹 서비스입니다. 쉽게 말해, "누가 무엇을 할 수 있는지"를 관리하는 시스템이라고 생각하면 됩니다.
 
-### 왜 IAM이 중요한가?
-- **보안**: 적절한 사람만 필요한 리소스에 접근할 수 있도록 제어
-- **규정 준수**: 기업의 보안 정책과 규정을 준수
-- **비용 관리**: 불필요한 리소스 사용을 방지
-- **감사**: 누가 언제 무엇을 했는지 추적 가능
+### IAM의 핵심 기능
+- **인증(Authentication)**: 사용자가 누구인지 확인
+- **권한 부여(Authorization)**: 인증된 사용자가 무엇을 할 수 있는지 결정
+- **중앙 집중식 관리**: 모든 AWS 서비스에 대한 액세스를 한 곳에서 관리
 
-## 2. IAM의 핵심 구성 요소
+## 2. IAM 핵심 구성 요소
 
 ### 2.1 사용자(Users)
-실제 사람이나 애플리케이션을 나타내는 개체입니다.
+개별 사람이나 애플리케이션을 나타내는 엔티티입니다.
 
-**특징:**
-- 고유한 이름과 자격 증명(비밀번호, 액세스 키)을 가짐
-- 직접 정책을 연결하거나 그룹에 속할 수 있음
-- 최대 5,000명의 사용자까지 생성 가능
+```mermaid
+graph TB
+    A[AWS Account] --> B[IAM User: Alice]
+    A --> C[IAM User: Bob]
+    A --> D[IAM User: DevApp]
+    
+    B --> E[Access Keys]
+    B --> F[Console Password]
+    C --> G[Access Keys]
+    D --> H[Access Keys Only]
+    
+    style A fill:#ff9999
+    style B fill:#99ccff
+    style C fill:#99ccff
+    style D fill:#99ccff
+```
 
-**사용 예시:**
-```
-개발자 김철수 → IAM User: kim.chulsoo
-마케팅팀 이영희 → IAM User: lee.younghee
-백업 애플리케이션 → IAM User: backup-app
-```
+**사용자 특징:**
+- 고유한 이름과 ARN(Amazon Resource Name)을 가짐
+- 영구적인 자격 증명(비밀번호, 액세스 키)을 가질 수 있음
+- 직접 정책을 연결하거나 그룹을 통해 권한을 부여받음
 
 ### 2.2 그룹(Groups)
-사용자들의 집합으로, 동일한 권한이 필요한 사용자들을 묶어서 관리합니다.
+사용자들의 집합으로, 권한 관리를 단순화합니다.
 
-**특징:**
-- 그룹에 정책을 연결하면 모든 구성원이 해당 권한을 상속
-- 사용자는 여러 그룹에 속할 수 있음
-- 그룹은 다른 그룹을 포함할 수 없음 (중첩 불가)
+```mermaid
+graph TB
+    A[IAM Groups] --> B[Developers Group]
+    A --> C[Admins Group]
+    A --> D[ReadOnly Group]
+    
+    B --> E[Alice]
+    B --> F[Bob]
+    C --> G[Charlie]
+    D --> H[David]
+    D --> I[Eve]
+    
+    B --> J[Development Policies]
+    C --> K[Admin Policies]
+    D --> L[ReadOnly Policies]
+    
+    style A fill:#ffcc99
+    style B fill:#99ff99
+    style C fill:#ff9999
+    style D fill:#99ccff
+```
 
-**사용 예시:**
-```
-Developers 그룹 → EC2, S3 개발 권한
-Admins 그룹 → 모든 AWS 서비스 관리 권한
-ReadOnly 그룹 → 모든 서비스 읽기 전용 권한
-```
+**그룹의 장점:**
+- 여러 사용자에게 동일한 권한을 쉽게 부여
+- 권한 변경 시 그룹 정책만 수정하면 됨
+- 조직 구조를 반영한 권한 관리 가능
 
 ### 2.3 역할(Roles)
-임시로 권한을 부여받을 수 있는 개체입니다. 사용자와 달리 영구적인 자격 증명이 없습니다.
+임시로 권한을 부여받을 수 있는 엔티티입니다.
 
-**특징:**
-- AWS 서비스, 다른 AWS 계정, 외부 시스템이 사용
+```mermaid
+graph LR
+    A[EC2 Instance] --> B[Assume Role]
+    B --> C[IAM Role: S3AccessRole]
+    C --> D[S3 Bucket Access]
+    
+    E[Lambda Function] --> F[Assume Role]
+    F --> G[IAM Role: DynamoDBRole]
+    G --> H[DynamoDB Access]
+    
+    style C fill:#ffcc99
+    style G fill:#ffcc99
+```
+
+**역할의 특징:**
+- 영구적인 자격 증명이 없음
 - 임시 보안 자격 증명을 제공
-- 교차 계정 액세스에 주로 사용
-
-**사용 예시:**
-```
-EC2 인스턴스가 S3에 접근 → EC2-S3-Access-Role
-Lambda 함수가 DynamoDB 사용 → Lambda-DynamoDB-Role
-외부 회사가 우리 계정 접근 → CrossAccount-Partner-Role
-```
+- AWS 서비스, 다른 AWS 계정, 외부 사용자가 사용 가능
 
 ### 2.4 정책(Policies)
-권한을 정의하는 JSON 문서입니다. "누가 무엇을 할 수 있는지"를 명시합니다.
+권한을 정의하는 JSON 문서입니다.
 
-**정책 유형:**
-1. **AWS 관리형 정책**: AWS에서 미리 만든 정책
-2. **고객 관리형 정책**: 사용자가 직접 만든 정책
-3. **인라인 정책**: 특정 사용자/그룹/역할에만 직접 연결된 정책
+```mermaid
+graph TB
+    A[IAM Policy] --> B[Policy Document JSON]
+    B --> C[Version]
+    B --> D[Statement Array]
+    
+    D --> E[Statement 1]
+    D --> F[Statement 2]
+    
+    E --> G[Effect: Allow/Deny]
+    E --> H[Action: s3:GetObject]
+    E --> I[Resource: arn:aws:s3:::bucket/*]
+    E --> J[Condition: Optional]
+    
+    style A fill:#ff9999
+    style B fill:#99ccff
+    style E fill:#99ff99
+```
 
-## 3. IAM 정책 구조
-
-IAM 정책은 JSON 형식으로 작성되며, 다음과 같은 구조를 가집니다:
-
+**정책 예시:**
 ```json
 {
   "Version": "2012-10-17",
@@ -85,110 +127,165 @@ IAM 정책은 JSON 형식으로 작성되며, 다음과 같은 구조를 가집�
         "s3:GetObject",
         "s3:PutObject"
       ],
-      "Resource": "arn:aws:s3:::my-bucket/*",
-      "Condition": {
-        "StringEquals": {
-          "s3:x-amz-server-side-encryption": "AES256"
-        }
-      }
+      "Resource": "arn:aws:s3:::my-bucket/*"
     }
   ]
 }
 ```
 
-### 정책 요소 설명:
-- **Version**: 정책 언어 버전 (항상 "2012-10-17" 사용)
-- **Statement**: 권한 명세서 (배열 형태로 여러 개 가능)
-- **Effect**: Allow(허용) 또는 Deny(거부)
-- **Action**: 허용/거부할 작업 목록
-- **Resource**: 작업이 적용될 AWS 리소스
-- **Condition**: 추가 조건 (선택사항)
+## 3. IAM 아키텍처 전체 구조
 
-## 4. IAM 보안 모범 사례
-
-### 4.1 최소 권한 원칙 (Principle of Least Privilege)
-사용자에게 작업 수행에 필요한 최소한의 권한만 부여합니다.
-
-**예시:**
+```mermaid
+graph TB
+    subgraph "AWS Account"
+        A[Root User] --> B[IAM Service]
+        
+        subgraph "IAM Components"
+            B --> C[Users]
+            B --> D[Groups]
+            B --> E[Roles]
+            B --> F[Policies]
+        end
+        
+        subgraph "Policy Types"
+            F --> G[AWS Managed Policies]
+            F --> H[Customer Managed Policies]
+            F --> I[Inline Policies]
+        end
+        
+        subgraph "AWS Services"
+            J[EC2]
+            K[S3]
+            L[RDS]
+            M[Lambda]
+        end
+        
+        C --> N[Attach Policies]
+        D --> O[Attach Policies]
+        E --> P[Attach Policies]
+        
+        N --> J
+        O --> K
+        P --> L
+        E --> M
+    end
+    
+    style A fill:#ff6666
+    style B fill:#66ccff
+    style C fill:#99ff99
+    style D fill:#ffcc99
+    style E fill:#cc99ff
 ```
-❌ 나쁜 예: 개발자에게 AdministratorAccess 정책 부여
-✅ 좋은 예: 개발자에게 필요한 EC2, S3 권한만 부여
+
+## 4. IAM 정책 평가 로직
+
+AWS는 다음과 같은 순서로 정책을 평가합니다:
+
+```mermaid
+flowchart TD
+    A[Request] --> B{Explicit Deny?}
+    B -->|Yes| C[DENY]
+    B -->|No| D{Explicit Allow?}
+    D -->|Yes| E[ALLOW]
+    D -->|No| F[DENY - Default]
+    
+    style C fill:#ff9999
+    style E fill:#99ff99
+    style F fill:#ff9999
 ```
 
-### 4.2 루트 계정 사용 금지
-루트 계정은 초기 설정 후 일상적인 작업에 사용하지 않습니다.
+**평가 원칙:**
+1. **기본적으로 거부**: 명시적 허용이 없으면 거부
+2. **명시적 거부가 우선**: Deny가 있으면 무조건 거부
+3. **최소 권한 원칙**: 필요한 최소한의 권한만 부여
 
-**루트 계정 보안:**
+## 5. IAM 보안 모범 사례
+
+### 5.1 Root 계정 보안
+- Root 계정은 초기 설정 후 사용 금지
 - MFA(Multi-Factor Authentication) 활성화
 - 강력한 비밀번호 설정
-- 액세스 키 생성하지 않기
-- 일상 작업용 IAM 사용자 생성
 
-### 4.3 정기적인 권한 검토
-- 사용하지 않는 사용자 계정 삭제
-- 과도한 권한을 가진 정책 수정
-- 액세스 키 정기적 교체
+### 5.2 사용자 관리
+- 개별 사용자 계정 생성 (공유 계정 금지)
+- 정기적인 액세스 키 로테이션
+- 불필요한 권한 제거
 
-### 4.4 그룹을 통한 권한 관리
-개별 사용자보다는 그룹을 통해 권한을 관리합니다.
-
+### 5.3 권한 관리
+```mermaid
+graph LR
+    A[최소 권한 원칙] --> B[필요한 권한만 부여]
+    B --> C[정기적 권한 검토]
+    C --> D[불필요한 권한 제거]
+    D --> A
+    
+    style A fill:#99ff99
+    style B fill:#ffcc99
+    style C fill:#99ccff
+    style D fill:#ff9999
 ```
-개별 관리: User1 → Policy A, User2 → Policy A, User3 → Policy A
-그룹 관리: Group A → Policy A, Users(1,2,3) → Group A
-```
 
-## 5. IAM의 글로벌 특성
-
-IAM은 **글로벌 서비스**입니다. 이는 다음을 의미합니다:
-
-- 모든 AWS 리전에서 동일하게 작동
-- 사용자, 그룹, 역할은 모든 리전에서 접근 가능
-- 정책 변경사항이 전 세계적으로 적용
-- 리전별로 별도 설정이 불필요
+### 5.4 모니터링 및 감사
+- CloudTrail을 통한 API 호출 로깅
+- IAM Access Analyzer 사용
+- 정기적인 권한 검토
 
 ## 6. 실제 사용 시나리오
 
-### 시나리오 1: 신입 개발자 온보딩
-1. **사용자 생성**: 신입 개발자용 IAM 사용자 생성
-2. **그룹 할당**: "Developers" 그룹에 추가
-3. **임시 비밀번호**: 초기 로그인용 임시 비밀번호 제공
-4. **MFA 설정**: 첫 로그인 시 MFA 설정 요구
+### 시나리오 1: 개발팀 권한 설정
+```mermaid
+graph TB
+    A[개발팀] --> B[Developers Group]
+    B --> C[Development Policy]
+    C --> D[EC2 인스턴스 관리]
+    C --> E[S3 개발 버킷 접근]
+    C --> F[CloudWatch 로그 조회]
+    
+    style A fill:#99ff99
+    style B fill:#ffcc99
+    style C fill:#99ccff
+```
 
-### 시나리오 2: 애플리케이션 배포
-1. **역할 생성**: EC2 인스턴스용 역할 생성
-2. **정책 연결**: S3 읽기, CloudWatch 로그 쓰기 권한 부여
-3. **인스턴스 연결**: EC2 인스턴스에 역할 할당
-4. **애플리케이션 실행**: 별도 자격 증명 없이 AWS 서비스 사용
+### 시나리오 2: 애플리케이션 서비스 간 통신
+```mermaid
+graph LR
+    A[Web Application<br/>EC2] --> B[Assume Role]
+    B --> C[S3AccessRole]
+    C --> D[S3 Bucket<br/>Read/Write]
+    
+    E[Lambda Function] --> F[Assume Role]
+    F --> G[DynamoDBRole]
+    G --> H[DynamoDB Table<br/>CRUD Operations]
+    
+    style C fill:#ffcc99
+    style G fill:#ffcc99
+```
 
-### 시나리오 3: 외부 파트너 액세스
-1. **교차 계정 역할**: 파트너 계정이 사용할 역할 생성
-2. **신뢰 정책**: 파트너 계정을 신뢰하도록 설정
-3. **권한 정책**: 필요한 최소 권한만 부여
-4. **임시 액세스**: 파트너가 역할을 assume하여 임시 액세스
+## 7. IAM 비용 및 제한사항
 
-## 7. IAM 요금
+### 비용
+- IAM 서비스 자체는 **무료**
+- 추가 보안 기능(예: AWS SSO)은 별도 요금
 
-IAM 사용에는 **추가 비용이 없습니다**. 다음 사항들이 무료입니다:
-
-- 사용자, 그룹, 역할 생성
-- 정책 생성 및 관리
-- 액세스 키 관리
-- MFA 디바이스 사용
-
-단, IAM을 통해 접근하는 AWS 서비스 사용료는 별도로 부과됩니다.
+### 제한사항
+- 계정당 최대 5,000명의 IAM 사용자
+- 사용자당 최대 10개의 관리형 정책 연결
+- 정책 문서 최대 크기: 6,144자
 
 ## 8. 다음 단계 준비
 
-내일(Day 3)에는 EC2(Elastic Compute Cloud)에 대해 학습할 예정입니다. IAM에서 배운 역할과 정책이 EC2 인스턴스에서 어떻게 활용되는지 확인해보겠습니다.
+내일은 EC2(Elastic Compute Cloud)에 대해 학습합니다. IAM에서 배운 역할(Role) 개념이 EC2 인스턴스에 권한을 부여하는 데 어떻게 사용되는지 확인해보세요.
 
-**미리 생각해볼 점:**
-- EC2 인스턴스가 다른 AWS 서비스에 접근하려면 어떤 IAM 구성이 필요할까?
-- 개발 환경과 운영 환경의 EC2 인스턴스에 서로 다른 권한을 부여하려면?
+### 예습 키워드
+- EC2 인스턴스
+- 인스턴스 프로파일
+- 보안 그룹
+- 키 페어
 
-## 요약
+---
 
-- **IAM**: AWS 리소스 접근을 제어하는 글로벌 서비스
-- **핵심 구성요소**: 사용자, 그룹, 역할, 정책
-- **보안 원칙**: 최소 권한, 루트 계정 보호, 정기 검토
-- **비용**: IAM 자체는 무료, 서비스 사용료만 부과
-- **다음 단계**: EC2와 IAM의 연동 학습
+**💡 핵심 포인트**
+- IAM은 AWS 보안의 핵심이며, 모든 AWS 서비스와 연동됩니다
+- 최소 권한 원칙을 항상 기억하세요
+- 역할(Role)은 AWS 서비스 간 안전한 통신의 핵심입니다
+- 정기적인 권한 검토와 모니터링이 중요합니다

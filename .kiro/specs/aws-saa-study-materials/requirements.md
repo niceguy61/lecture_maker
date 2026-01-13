@@ -45,11 +45,11 @@ AWS Solutions Architect Associate (SAA-C03) 시험 합격을 위한 1달간의 �
 
 #### Acceptance Criteria
 
-1. THE Hands_On_Lab SHALL provide Python-based practical exercises
-2. WHEN creating labs, THE Hands_On_Lab SHALL include complete requirements.txt files
-3. THE Hands_On_Lab SHALL provide step-by-step implementation guides
-4. THE Hands_On_Lab SHALL include working code examples and templates
-5. WHEN labs require AWS services, THE Hands_On_Lab SHALL provide clear setup instructions
+1. THE Hands_On_Lab SHALL provide AWS Console-based practical exercises
+2. WHEN creating labs, THE Hands_On_Lab SHALL include step-by-step Console navigation guides
+3. THE Hands_On_Lab SHALL provide detailed screenshots and instructions for AWS Console operations
+4. THE Hands_On_Lab SHALL include Python code only for serverless (Lambda) related exercises
+5. WHEN labs require AWS services, THE Hands_On_Lab SHALL provide clear Console-based setup instructions
 
 ### Requirement 4: 진도 확인 시스템
 
@@ -69,11 +69,11 @@ AWS Solutions Architect Associate (SAA-C03) 시험 합격을 위한 1달간의 �
 
 #### Acceptance Criteria
 
-1. THE Visual_Content SHALL generate Mermaid diagrams for AWS service relationships
-2. THE Visual_Content SHALL create SVG graphics for architectural patterns
-3. WHEN illustrating concepts, THE Visual_Content SHALL use clear, educational diagrams
-4. THE Visual_Content SHALL include interactive elements where appropriate
-5. THE Visual_Content SHALL maintain consistent visual styling across all materials
+1. THE Visual_Content SHALL generate Mermaid diagrams directly embedded in theory.md files
+2. THE Visual_Content SHALL create SVG graphics integrated within theoretical content
+3. WHEN illustrating concepts, THE Visual_Content SHALL be immediately viewable in theory files
+4. THE Visual_Content SHALL include interactive elements where appropriate within theory content
+5. THE Visual_Content SHALL maintain consistent visual styling across all embedded materials
 
 ### Requirement 6: 콘텐츠 품질 관리
 

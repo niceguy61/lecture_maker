@@ -1,344 +1,293 @@
 # AWS 글로벌 인프라 시각화 자료
 
-## 1. AWS 글로벌 인프라 개요
+## 1. AWS 글로벌 인프라 전체 구조
 
 ```mermaid
 graph TB
-    subgraph "AWS 글로벌 인프라"
-        A[AWS 글로벌 인프라] --> B[리전<br/>Regions]
-        A --> C[엣지 로케이션<br/>Edge Locations]
-        A --> D[리전별 엣지 캐시<br/>Regional Edge Caches]
+    subgraph "AWS 글로벌 인프라 계층"
+        A[AWS 글로벌 인프라] --> B[리전<br/>33개 리전]
+        A --> C[가용 영역<br/>105개 AZ]
+        A --> D[엣지 로케이션<br/>400+ 위치]
+        A --> E[로컬 존<br/>대도시 근처]
         
-        B --> B1[33개 리전<br/>전 세계 분산]
-        B --> B2[지리적으로 분리]
-        B --> B3[독립적 운영]
-        
-        C --> C1[400개 이상]
-        C --> C2[콘텐츠 캐싱]
-        C --> C3[CloudFront CDN]
-        
-        D --> D1[중간 캐시 계층]
-        D --> D2[캐시 적중률 향상]
+        B --> B1["지리적으로 분리된<br/>독립적인 데이터센터 클러스터"]
+        C --> C1["리전 내 물리적으로<br/>분리된 데이터센터"]
+        D --> D1["CDN 캐시 서버<br/>콘텐츠 배포 네트워크"]
+        E --> E1["초저지연 애플리케이션<br/>지원 인프라"]
     end
-    
-    style A fill:#ff9999
-    style B fill:#99ccff
-    style C fill:#99ff99
-    style D fill:#ffcc99
 ```
 
-## 2. 리전과 가용 영역 구조
+## 2. 리전과 가용 영역 관계
 
 ```mermaid
 graph TB
-    subgraph "AWS 리전 (예: ap-northeast-2)"
-        subgraph "가용 영역 A"
-            AZ1[ap-northeast-2a]
-            DC1[데이터 센터 1]
-            DC2[데이터 센터 2]
-            AZ1 --> DC1
-            AZ1 --> DC2
+    subgraph "AWS 리전 구조"
+        subgraph "Region: ap-northeast-2 (서울)"
+            AZ1["AZ-2a<br/>📍 데이터센터 A<br/>독립 전력/냉각/네트워킹"]
+            AZ2["AZ-2b<br/>📍 데이터센터 B<br/>독립 전력/냉각/네트워킹"]
+            AZ3["AZ-2c<br/>📍 데이터센터 C<br/>독립 전력/냉각/네트워킹"]
+            AZ4["AZ-2d<br/>📍 데이터센터 D<br/>독립 전력/냉각/네트워킹"]
         end
         
-        subgraph "가용 영역 B"
-            AZ2[ap-northeast-2b]
-            DC3[데이터 센터 3]
-            DC4[데이터 센터 4]
-            AZ2 --> DC3
-            AZ2 --> DC4
-        end
-        
-        subgraph "가용 영역 C"
-            AZ3[ap-northeast-2c]
-            DC5[데이터 센터 5]
-            DC6[데이터 센터 6]
-            AZ3 --> DC5
-            AZ3 --> DC6
-        end
-        
-        subgraph "가용 영역 D"
-            AZ4[ap-northeast-2d]
-            DC7[데이터 센터 7]
-            DC8[데이터 센터 8]
-            AZ4 --> DC7
-            AZ4 --> DC8
-        end
+        AZ1 <--> AZ2
+        AZ2 <--> AZ3
+        AZ3 <--> AZ4
+        AZ1 <--> AZ3
+        AZ1 <--> AZ4
+        AZ2 <--> AZ4
     end
     
-    AZ1 -.->|고속 네트워크<br/>지연시간 < 1ms| AZ2
-    AZ2 -.->|고속 네트워크<br/>지연시간 < 1ms| AZ3
-    AZ3 -.->|고속 네트워크<br/>지연시간 < 1ms| AZ4
-    AZ1 -.->|고속 네트워크<br/>지연시간 < 1ms| AZ3
-    
-    style AZ1 fill:#e1f5fe
-    style AZ2 fill:#e8f5e8
-    style AZ3 fill:#fff3e0
-    style AZ4 fill:#fce4ec
+    subgraph "연결 특성"
+        CONN1["🔗 고속 네트워크<br/>지연시간 < 10ms"]
+        CONN2["🔒 암호화된 연결<br/>높은 대역폭"]
+        CONN3["⚡ 실시간 데이터 복제<br/>고가용성 보장"]
+    end
 ```
 
-## 3. 고가용성 아키텍처 설계
+## 3. 전 세계 주요 리전 분포
 
 ```mermaid
 graph TB
-    subgraph "단일 AZ 배포 (권장하지 않음)"
-        U1[사용자] --> LB1[로드 밸런서]
-        LB1 --> AZ1_APP[애플리케이션 서버]
-        AZ1_APP --> AZ1_DB[데이터베이스]
-        
-        AZ1_FAIL[❌ AZ 장애 시<br/>전체 서비스 중단]
+    subgraph "북미 (North America)"
+        NA1["🇺🇸 us-east-1<br/>버지니아 북부<br/>6개 AZ"]
+        NA2["🇺🇸 us-west-2<br/>오레곤<br/>4개 AZ"]
+        NA3["🇨🇦 ca-central-1<br/>캐나다 중부<br/>3개 AZ"]
     end
     
-    subgraph "다중 AZ 배포 (권장)"
-        U2[사용자] --> LB2[로드 밸런서<br/>다중 AZ]
-        
-        LB2 --> AZ2A_APP[애플리케이션 서버<br/>AZ-A]
-        LB2 --> AZ2B_APP[애플리케이션 서버<br/>AZ-B]
-        
-        AZ2A_APP --> DB_PRIMARY[Primary DB<br/>AZ-A]
-        AZ2B_APP --> DB_PRIMARY
-        
-        DB_PRIMARY -.->|동기 복제| DB_STANDBY[Standby DB<br/>AZ-B]
-        
-        AZ2_SUCCESS[✅ 한 AZ 장애 시에도<br/>서비스 지속]
+    subgraph "아시아 태평양 (Asia Pacific)"
+        AP1["🇰🇷 ap-northeast-2<br/>서울<br/>4개 AZ"]
+        AP2["🇯🇵 ap-northeast-1<br/>도쿄<br/>3개 AZ"]
+        AP3["🇸🇬 ap-southeast-1<br/>싱가포르<br/>3개 AZ"]
+        AP4["🇦🇺 ap-southeast-2<br/>시드니<br/>3개 AZ"]
     end
     
-    style AZ1_FAIL fill:#ffcdd2
-    style AZ2_SUCCESS fill:#c8e6c9
+    subgraph "유럽 (Europe)"
+        EU1["🇮🇪 eu-west-1<br/>아일랜드<br/>3개 AZ"]
+        EU2["🇩🇪 eu-central-1<br/>프랑크푸르트<br/>3개 AZ"]
+        EU3["🇬🇧 eu-west-2<br/>런던<br/>3개 AZ"]
+    end
+    
+    subgraph "남미 (South America)"
+        SA1["🇧🇷 sa-east-1<br/>상파울루<br/>3개 AZ"]
+    end
 ```
 
-## 4. 엣지 로케이션과 CloudFront
+## 4. 엣지 로케이션 네트워크
 
 ```mermaid
 graph TB
-    subgraph "글로벌 콘텐츠 배송"
-        USER1[사용자 - 서울] --> EDGE1[엣지 로케이션<br/>서울]
-        USER2[사용자 - 도쿄] --> EDGE2[엣지 로케이션<br/>도쿄]
-        USER3[사용자 - 싱가포르] --> EDGE3[엣지 로케이션<br/>싱가포르]
+    subgraph "CloudFront 엣지 네트워크"
+        subgraph "아시아"
+            EDGE_ASIA["🌏 아시아 엣지<br/>서울, 도쿄, 싱가포르<br/>홍콩, 뭄바이, 시드니"]
+        end
         
-        EDGE1 --> CACHE1{캐시 확인}
-        EDGE2 --> CACHE2{캐시 확인}
-        EDGE3 --> CACHE3{캐시 확인}
+        subgraph "북미"
+            EDGE_NA["🌎 북미 엣지<br/>뉴욕, 시애틀, 댈러스<br/>로스앤젤레스, 토론토"]
+        end
         
-        CACHE1 -->|캐시 미스| REGIONAL[리전별 엣지 캐시<br/>ap-northeast-2]
-        CACHE2 -->|캐시 미스| REGIONAL
-        CACHE3 -->|캐시 미스| REGIONAL
+        subgraph "유럽"
+            EDGE_EU["🌍 유럽 엣지<br/>런던, 프랑크푸르트<br/>파리, 암스테르담, 밀라노"]
+        end
         
-        REGIONAL --> ORIGIN_CHECK{캐시 확인}
-        ORIGIN_CHECK -->|캐시 미스| ORIGIN[오리진 서버<br/>S3 버킷]
-        
-        CACHE1 -->|캐시 히트| CONTENT1[콘텐츠 반환<br/>빠른 응답]
-        CACHE2 -->|캐시 히트| CONTENT2[콘텐츠 반환<br/>빠른 응답]
-        CACHE3 -->|캐시 히트| CONTENT3[콘텐츠 반환<br/>빠른 응답]
+        subgraph "기타 지역"
+            EDGE_OTHER["🌐 기타 지역<br/>상파울루, 케이프타운<br/>텔아비브, 자카르타"]
+        end
     end
     
-    style CONTENT1 fill:#c8e6c9
-    style CONTENT2 fill:#c8e6c9
-    style CONTENT3 fill:#c8e6c9
+    USER1["👤 한국 사용자"] --> EDGE_ASIA
+    USER2["👤 미국 사용자"] --> EDGE_NA
+    USER3["👤 유럽 사용자"] --> EDGE_EU
+    USER4["👤 기타 지역 사용자"] --> EDGE_OTHER
+    
+    EDGE_ASIA -.-> ORIGIN1["📦 오리진 서버<br/>S3, EC2 등"]
+    EDGE_NA -.-> ORIGIN1
+    EDGE_EU -.-> ORIGIN1
+    EDGE_OTHER -.-> ORIGIN1
 ```
 
-## 5. AWS 서비스 카테고리 맵
-
-```mermaid
-mindmap
-  root((AWS 서비스))
-    컴퓨팅
-      EC2
-        인스턴스
-        Auto Scaling
-        Elastic Load Balancing
-      Lambda
-        서버리스 함수
-        이벤트 기반
-      ECS/EKS
-        컨테이너 오케스트레이션
-      Batch
-        배치 작업
-    스토리지
-      S3
-        객체 스토리지
-        정적 웹사이트
-      EBS
-        블록 스토리지
-        EC2 연결
-      EFS
-        파일 스토리지
-        NFS 프로토콜
-      Glacier
-        아카이브 스토리지
-        장기 보관
-    데이터베이스
-      RDS
-        관계형 DB
-        MySQL, PostgreSQL
-      DynamoDB
-        NoSQL DB
-        키-값 저장소
-      ElastiCache
-        인메모리 캐시
-        Redis, Memcached
-      Redshift
-        데이터 웨어하우스
-        분석용 DB
-    네트워킹
-      VPC
-        가상 네트워크
-        서브넷, 라우팅
-      CloudFront
-        CDN 서비스
-        콘텐츠 배송
-      Route 53
-        DNS 서비스
-        도메인 관리
-      Direct Connect
-        전용 연결
-        온프레미스 연동
-    보안
-      IAM
-        자격증명 관리
-        권한 제어
-      KMS
-        키 관리
-        암호화
-      CloudTrail
-        API 로깅
-        감사 추적
-      GuardDuty
-        위협 탐지
-        보안 모니터링
-    관리도구
-      CloudWatch
-        모니터링
-        로그 수집
-      CloudFormation
-        인프라 코드
-        템플릿 배포
-      Systems Manager
-        시스템 관리
-        패치 관리
-      Config
-        구성 관리
-        규정 준수
-```
-
-## 6. AWS 공동 책임 모델
+## 5. 고가용성 아키텍처 예시
 
 ```mermaid
 graph TB
-    subgraph "AWS 책임 영역 (클라우드의 보안)"
-        AWS1[물리적 보안]
-        AWS2[하드웨어 인프라]
-        AWS3[네트워크 인프라]
-        AWS4[가상화 인프라]
-        AWS5[관리형 서비스 구성]
+    subgraph "Multi-AZ 고가용성 설계"
+        subgraph "AZ-2a (Primary)"
+            WEB1["🌐 웹 서버<br/>EC2 인스턴스"]
+            APP1["⚙️ 애플리케이션 서버<br/>EC2 인스턴스"]
+            DB1["🗄️ 데이터베이스<br/>RDS Primary"]
+        end
+        
+        subgraph "AZ-2b (Secondary)"
+            WEB2["🌐 웹 서버<br/>EC2 인스턴스"]
+            APP2["⚙️ 애플리케이션 서버<br/>EC2 인스턴스"]
+            DB2["🗄️ 데이터베이스<br/>RDS Standby"]
+        end
+        
+        subgraph "AZ-2c (Tertiary)"
+            WEB3["🌐 웹 서버<br/>EC2 인스턴스"]
+            APP3["⚙️ 애플리케이션 서버<br/>EC2 인스턴스"]
+            BACKUP["💾 백업 스토리지<br/>S3"]
+        end
     end
     
-    subgraph "공유 제어"
-        SHARED1[패치 관리]
-        SHARED2[구성 관리]
-        SHARED3[인식 및 교육]
-    end
+    LB["⚖️ 로드 밸런서<br/>Application Load Balancer"]
     
-    subgraph "고객 책임 영역 (클라우드에서의 보안)"
-        CUSTOMER1[게스트 OS 및 업데이트]
-        CUSTOMER2[애플리케이션 소프트웨어]
-        CUSTOMER3[보안 그룹 구성]
-        CUSTOMER4[방화벽 구성]
-        CUSTOMER5[네트워크 및 플랫폼 자격증명]
-        CUSTOMER6[데이터 암호화]
-    end
+    USER["👤 사용자"] --> LB
+    LB --> WEB1
+    LB --> WEB2
+    LB --> WEB3
     
-    subgraph "서비스 유형별 책임"
-        IaaS[IaaS<br/>EC2, VPC<br/>고객 책임 ↑]
-        PaaS[PaaS<br/>RDS, Lambda<br/>공유 책임]
-        SaaS[SaaS<br/>WorkMail<br/>AWS 책임 ↑]
-    end
+    WEB1 --> APP1
+    WEB2 --> APP2
+    WEB3 --> APP3
     
-    style AWS1 fill:#ff9999
-    style AWS2 fill:#ff9999
-    style AWS3 fill:#ff9999
-    style AWS4 fill:#ff9999
-    style AWS5 fill:#ff9999
+    APP1 --> DB1
+    APP2 --> DB1
+    APP3 --> DB1
     
-    style SHARED1 fill:#ffeb3b
-    style SHARED2 fill:#ffeb3b
-    style SHARED3 fill:#ffeb3b
-    
-    style CUSTOMER1 fill:#4caf50
-    style CUSTOMER2 fill:#4caf50
-    style CUSTOMER3 fill:#4caf50
-    style CUSTOMER4 fill:#4caf50
-    style CUSTOMER5 fill:#4caf50
-    style CUSTOMER6 fill:#4caf50
+    DB1 -.-> DB2
+    DB1 -.-> BACKUP
 ```
 
-## 7. 리전 선택 기준
-
-```mermaid
-flowchart TD
-    START[리전 선택 시작] --> COMPLIANCE{규정 준수<br/>요구사항 있음?}
-    
-    COMPLIANCE -->|예| LEGAL[법적 요구사항<br/>충족 리전 선택]
-    COMPLIANCE -->|아니오| LATENCY{지연 시간<br/>중요함?}
-    
-    LATENCY -->|예| PROXIMITY[사용자와 가장<br/>가까운 리전 선택]
-    LATENCY -->|아니오| SERVICE{필요한 서비스<br/>제공됨?}
-    
-    SERVICE -->|예| COST{비용<br/>고려사항?}
-    SERVICE -->|아니오| ALTERNATIVE[대체 서비스<br/>또는 다른 리전 검토]
-    
-    COST -->|예| COMPARE[리전별 가격<br/>비교 분석]
-    COST -->|아니오| DECISION[리전 결정]
-    
-    LEGAL --> DECISION
-    PROXIMITY --> SERVICE
-    COMPARE --> DECISION
-    ALTERNATIVE --> START
-    
-    DECISION --> FINAL[최종 리전 선택 완료]
-    
-    style START fill:#e3f2fd
-    style DECISION fill:#c8e6c9
-    style FINAL fill:#4caf50
-    style ALTERNATIVE fill:#ffcdd2
-```
-
-## 8. AWS Well-Architected Framework 5 Pillars
+## 6. 데이터 복제 및 백업 전략
 
 ```mermaid
 graph LR
-    subgraph "AWS Well-Architected Framework"
-        PILLAR1[운영 우수성<br/>Operational Excellence]
-        PILLAR2[보안<br/>Security]
-        PILLAR3[안정성<br/>Reliability]
-        PILLAR4[성능 효율성<br/>Performance Efficiency]
-        PILLAR5[비용 최적화<br/>Cost Optimization]
-        
-        PILLAR1 --> P1_1[시스템 운영 및 모니터링]
-        PILLAR1 --> P1_2[지속적인 개선]
-        PILLAR1 --> P1_3[자동화]
-        
-        PILLAR2 --> P2_1[정보 및 시스템 보호]
-        PILLAR2 --> P2_2[위험 평가 및 완화]
-        PILLAR2 --> P2_3[다층 보안]
-        
-        PILLAR3 --> P3_1[장애 복구 능력]
-        PILLAR3 --> P3_2[동적 수요 충족]
-        PILLAR3 --> P3_3[자동 복구]
-        
-        PILLAR4 --> P4_1[효율적 리소스 사용]
-        PILLAR4 --> P4_2[기술 발전 활용]
-        PILLAR4 --> P4_3[성능 모니터링]
-        
-        PILLAR5 --> P5_1[불필요한 비용 방지]
-        PILLAR5 --> P5_2[최적 가격 달성]
-        PILLAR5 --> P5_3[비용 투명성]
+    subgraph "Primary Region: ap-northeast-2"
+        PRIMARY["🏢 운영 환경<br/>실시간 서비스"]
+        PRIMARY_BACKUP["💾 로컬 백업<br/>스냅샷, 로그"]
     end
     
-    style PILLAR1 fill:#e3f2fd
-    style PILLAR2 fill:#ffebee
-    style PILLAR3 fill:#e8f5e8
-    style PILLAR4 fill:#fff3e0
-    style PILLAR5 fill:#f3e5f5
+    subgraph "Secondary Region: ap-northeast-1"
+        SECONDARY["🏢 재해복구 환경<br/>대기 상태"]
+        SECONDARY_BACKUP["💾 원격 백업<br/>교차 리전 복제"]
+    end
+    
+    subgraph "Global Services"
+        S3_GLOBAL["🌐 S3 Cross-Region<br/>자동 복제"]
+        CLOUDFRONT["🚀 CloudFront<br/>글로벌 캐시"]
+    end
+    
+    PRIMARY --> PRIMARY_BACKUP
+    PRIMARY -.-> SECONDARY
+    PRIMARY_BACKUP -.-> SECONDARY_BACKUP
+    
+    PRIMARY --> S3_GLOBAL
+    SECONDARY --> S3_GLOBAL
+    
+    S3_GLOBAL --> CLOUDFRONT
+    
+    USERS["👥 전 세계 사용자"] --> CLOUDFRONT
 ```
 
-이러한 시각화 자료들은 AWS의 복잡한 개념들을 이해하기 쉽게 도식화한 것입니다. 각 다이어그램을 통해 AWS 글로벌 인프라의 구조와 서비스 관계를 명확히 파악할 수 있습니다.
+## 7. 리전 선택 의사결정 트리
+
+```mermaid
+graph TD
+    START["🤔 리전 선택 시작"] --> Q1{"📍 사용자 위치는?"}
+    
+    Q1 -->|한국/동아시아| ASIA["🇰🇷 ap-northeast-2<br/>🇯🇵 ap-northeast-1"]
+    Q1 -->|북미| NA["🇺🇸 us-east-1<br/>🇺🇸 us-west-2"]
+    Q1 -->|유럽| EU["🇮🇪 eu-west-1<br/>🇩🇪 eu-central-1"]
+    
+    ASIA --> Q2{"💰 비용 vs 성능?"}
+    NA --> Q3{"🔧 필요한 서비스<br/>모두 제공?"}
+    EU --> Q4{"⚖️ 데이터 규정<br/>준수 필요?"}
+    
+    Q2 -->|성능 우선| SEOUL["✅ ap-northeast-2<br/>서울 리전 선택"]
+    Q2 -->|비용 우선| TOKYO["✅ ap-northeast-1<br/>도쿄 리전 선택"]
+    
+    Q3 -->|예| VIRGINIA["✅ us-east-1<br/>버지니아 리전 선택"]
+    Q3 -->|아니오| OREGON["✅ us-west-2<br/>오레곤 리전 선택"]
+    
+    Q4 -->|GDPR 준수| IRELAND["✅ eu-west-1<br/>아일랜드 리전 선택"]
+    Q4 -->|독일 법규| FRANKFURT["✅ eu-central-1<br/>프랑크푸르트 리전 선택"]
+```
+
+## 8. AWS 서비스별 글로벌 vs 리전별 분류
+
+```mermaid
+graph TB
+    subgraph "글로벌 서비스 (Global Services)"
+        GLOBAL1["🌐 IAM<br/>사용자 및 권한 관리"]
+        GLOBAL2["🌐 Route 53<br/>DNS 서비스"]
+        GLOBAL3["🌐 CloudFront<br/>CDN 서비스"]
+        GLOBAL4["🌐 WAF<br/>웹 애플리케이션 방화벽"]
+    end
+    
+    subgraph "리전별 서비스 (Regional Services)"
+        REGIONAL1["🏢 EC2<br/>가상 서버"]
+        REGIONAL2["🏢 S3<br/>객체 스토리지"]
+        REGIONAL3["🏢 RDS<br/>관리형 데이터베이스"]
+        REGIONAL4["🏢 VPC<br/>가상 사설 클라우드"]
+    end
+    
+    subgraph "AZ별 서비스 (AZ-specific Services)"
+        AZ1["📍 EBS<br/>블록 스토리지"]
+        AZ2["📍 서브넷<br/>네트워크 세그먼트"]
+        AZ3["📍 EC2 인스턴스<br/>특정 AZ에 배치"]
+    end
+    
+    GLOBAL1 -.-> REGIONAL1
+    GLOBAL2 -.-> REGIONAL2
+    REGIONAL1 --> AZ1
+    REGIONAL4 --> AZ2
+    REGIONAL1 --> AZ3
+```
+
+## 9. 네트워크 지연시간 비교
+
+```mermaid
+graph LR
+    subgraph "지연시간 비교 (한국 기준)"
+        KOREA["🇰🇷 한국 사용자"]
+        
+        SEOUL["ap-northeast-2<br/>서울<br/>⚡ ~5ms"]
+        TOKYO["ap-northeast-1<br/>도쿄<br/>⚡ ~30ms"]
+        SINGAPORE["ap-southeast-1<br/>싱가포르<br/>⚡ ~80ms"]
+        VIRGINIA["us-east-1<br/>버지니아<br/>⚡ ~180ms"]
+        IRELAND["eu-west-1<br/>아일랜드<br/>⚡ ~280ms"]
+    end
+    
+    KOREA --> SEOUL
+    KOREA --> TOKYO
+    KOREA --> SINGAPORE
+    KOREA --> VIRGINIA
+    KOREA --> IRELAND
+    
+    style SEOUL fill:#90EE90
+    style TOKYO fill:#FFE4B5
+    style SINGAPORE fill:#FFB6C1
+    style VIRGINIA fill:#FFA07A
+    style IRELAND fill:#F08080
+```
+
+## 10. 재해 복구 전략 시각화
+
+```mermaid
+graph TB
+    subgraph "재해 복구 시나리오"
+        subgraph "정상 운영"
+            NORMAL["🟢 Primary Region<br/>ap-northeast-2<br/>100% 트래픽"]
+        end
+        
+        subgraph "재해 발생"
+            DISASTER["🔴 Primary Region<br/>ap-northeast-2<br/>서비스 중단"]
+            FAILOVER["🟡 Secondary Region<br/>ap-northeast-1<br/>자동 전환"]
+        end
+        
+        subgraph "복구 완료"
+            RECOVERY["🟢 Primary Region<br/>ap-northeast-2<br/>서비스 복구"]
+            FAILBACK["🔄 트래픽 복귀<br/>정상 운영 재개"]
+        end
+    end
+    
+    NORMAL -->|재해 발생| DISASTER
+    DISASTER -->|자동 전환| FAILOVER
+    FAILOVER -->|복구 작업| RECOVERY
+    RECOVERY -->|트래픽 복귀| FAILBACK
+    FAILBACK -->|정상 운영| NORMAL
+```
+
+---
+
+**참고사항**: 이 시각화 자료들은 AWS 글로벌 인프라의 핵심 개념을 이해하기 위한 교육용 다이어그램입니다. 실제 AWS 인프라는 더욱 복잡하고 정교한 구조를 가지고 있습니다.
