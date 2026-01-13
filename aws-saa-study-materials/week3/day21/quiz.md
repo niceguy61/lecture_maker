@@ -22,9 +22,12 @@ B) 게임 서버: NLB, 웹 API: ALB, 스트리밍: NLB
 C) 모든 서비스에 NLB 사용  
 D) 게임 서버: CLB, 웹 API: ALB, 스트리밍: NLB  
 
-### 정답: B
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: B**
+
+**해설:**
 각 서비스의 특성에 맞는 Load Balancer를 선택해야 합니다.
 
 - **게임 서버**: UDP 트래픽과 고정 IP가 필요하므로 **NLB**가 적합합니다. NLB는 Layer 4에서 동작하며 UDP를 지원하고 고정 IP를 제공합니다.
@@ -32,6 +35,7 @@ D) 게임 서버: CLB, 웹 API: ALB, 스트리밍: NLB
 - **스트리밍 서비스**: TCP 연결과 높은 처리량이 필요하므로 **NLB**가 적합합니다. NLB는 초고성능과 낮은 지연시간을 제공합니다.
 
 **관련 개념**: Load Balancer 유형별 특징, 서비스 요구사항 분석
+</details>
 
 ---
 
@@ -44,9 +48,12 @@ B) Cache-Control 헤더를 사용하여 콘텐츠별로 TTL 설정
 C) 모든 쿼리 스트링을 캐시 키에 포함  
 D) Origin Request Policy를 사용하지 않음  
 
-### 정답: B
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: B**
+
+**해설:**
 동적 콘텐츠의 캐싱 최적화는 콘텐츠의 특성에 따라 세밀하게 제어해야 합니다.
 
 - **A) 틀림**: 모든 동적 콘텐츠의 TTL을 0으로 설정하면 캐싱의 이점을 전혀 활용할 수 없습니다.
@@ -63,6 +70,7 @@ D) Origin Request Policy를 사용하지 않음
 - 정적 리소스: `Cache-Control: max-age=31536000`
 
 **관련 개념**: CloudFront 캐싱 정책, Cache-Control 헤더, TTL 설정
+</details>
 
 ---
 
@@ -80,9 +88,12 @@ B) Latency + Failover + Weighted
 C) Geolocation + Weighted + Health Check  
 D) Multivalue + Geoproximity + Failover  
 
-### 정답: A
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: A**
+
+**해설:**
 복합적인 요구사항을 만족하려면 여러 라우팅 정책을 조합해야 합니다.
 
 **요구사항 분석**:
@@ -105,6 +116,7 @@ D) Multivalue + Geoproximity + Failover
 - **D)**: Multivalue는 여러 IP 반환, Geoproximity는 거리 기반
 
 **관련 개념**: Route 53 라우팅 정책 조합, 복합 시나리오 설계
+</details>
 
 ---
 
@@ -117,9 +129,12 @@ B) Lambda Authorizer + JWT 토큰
 C) Cognito User Pool + OAuth 2.0  
 D) IAM 역할 기반 인증  
 
-### 정답: C
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: C**
+
+**해설:**
 보안 강화 측면에서 각 인증 방식을 비교해보겠습니다.
 
 **보안 수준 비교**:
@@ -140,6 +155,7 @@ D) IAM 역할 기반 인증
 - 규정 준수 (GDPR, HIPAA 등)
 
 **관련 개념**: API Gateway 보안, Cognito User Pool, OAuth 2.0
+</details>
 
 ---
 
@@ -154,9 +170,12 @@ B) 메모리: 3008MB, 임시 스토리지: 10240MB, 아키텍처: arm64
 C) 메모리: 1792MB, 임시 스토리지: 1024MB, 아키텍처: arm64  
 D) 메모리: 512MB, 임시 스토리지: 512MB, 아키텍처: x86_64  
 
-### 정답: C
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: C**
+
+**해설:**
 Lambda 최적화는 성능과 비용의 균형을 맞춰야 합니다.
 
 **메모리 설정 분석**:
@@ -180,6 +199,7 @@ Lambda 최적화는 성능과 비용의 균형을 맞춰야 합니다.
 - 적절한 임시 스토리지 → I/O 성능 향상
 
 **관련 개념**: Lambda 성능 튜닝, 메모리-CPU 관계, 아키텍처 선택
+</details>
 
 ---
 
@@ -198,9 +218,12 @@ B) Blue/Green Deployment
 C) Canary Deployment  
 D) In-place Deployment  
 
-### 정답: B
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: B**
+
+**해설:**
 각 배포 전략의 특징을 시나리오 요구사항과 비교해보겠습니다.
 
 **요구사항 분석**:
@@ -238,6 +261,7 @@ D) In-place Deployment
 - ECS Fargate 사용 시 리소스 비용 부담 최소화
 
 **관련 개념**: ECS 배포 전략, Blue/Green 배포, 무중단 배포
+</details>
 
 ---
 
@@ -256,9 +280,12 @@ B) Scheduled Scaling + Target Tracking Scaling
 C) Step Scaling + Simple Scaling  
 D) Predictive Scaling + Scheduled Scaling  
 
-### 정답: B
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: B**
+
+**해설:**
 예측 가능한 패턴과 예측 불가능한 변화를 모두 고려해야 합니다.
 
 **트래픽 패턴 분석**:
@@ -297,6 +324,7 @@ Target Tracking:
 ```
 
 **관련 개념**: Auto Scaling 정책 조합, 예측 가능한 워크로드 최적화
+</details>
 
 ---
 
@@ -309,9 +337,12 @@ B) Origin Access Identity (OAI) 사용
 C) Origin Access Control (OAC) 사용  
 D) S3 버킷 정책으로만 CloudFront IP 허용  
 
-### 정답: C
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: C**
+
+**해설:**
 CloudFront와 S3 간 보안 구성의 발전 과정을 이해해야 합니다.
 
 **보안 구성 비교**:
@@ -362,6 +393,7 @@ CloudFront와 S3 간 보안 구성의 발전 과정을 이해해야 합니다.
 ```
 
 **관련 개념**: CloudFront 보안, OAC vs OAI, S3 버킷 정책
+</details>
 
 ---
 
@@ -374,9 +406,12 @@ B) 응답 형식을 Lambda 함수에서 완전히 제어 가능
 C) API Gateway에서 자동으로 응답 변환 수행  
 D) 개발 및 디버깅이 간편함  
 
-### 정답: C
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: C**
+
+**해설:**
 Lambda Proxy Integration과 Non-Proxy Integration의 차이점을 이해해야 합니다.
 
 **Lambda Proxy Integration 특징**:
@@ -412,6 +447,7 @@ return {
 ```
 
 **관련 개념**: Lambda Proxy Integration, API Gateway 통합 유형
+</details>
 
 ---
 
@@ -430,9 +466,12 @@ B) HTTPS Health Check로 /health 엔드포인트 확인
 C) Calculated Health Check로 여러 조건 조합  
 D) CloudWatch Alarm 기반 Health Check  
 
-### 정답: C
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: C**
+
+**해설:**
 복합적인 장애 조건을 모니터링하려면 Calculated Health Check가 필요합니다.
 
 **요구사항 분석**:
@@ -475,6 +514,7 @@ Logic: (HTTP AND HTTPS AND CloudWatch) = Healthy
 - 빠른 장애 감지 (10초 간격 가능)
 
 **관련 개념**: Route 53 Health Check 유형, Calculated Health Check
+</details>
 
 ---
 
@@ -493,9 +533,12 @@ B) 더 높은 성능을 제공하기 때문
 C) 서버 관리 부담이 없기 때문  
 D) 더 많은 커스터마이징이 가능하기 때문  
 
-### 정답: C
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: C**
+
+**해설:**
 시나리오의 핵심은 "작은 운영팀"과 "복잡한 마이크로서비스 환경"입니다.
 
 **시나리오 분석**:
@@ -536,6 +579,7 @@ Fargate: 위 작업들이 모두 자동화됨
 ```
 
 **관련 개념**: ECS 실행 모드, 서버리스 컨테이너, 운영 복잡성
+</details>
 
 ---
 
@@ -548,9 +592,12 @@ B) Source → Build → Test → Deploy
 C) Source → Build → Test → Security Scan → Deploy → Post-Deploy Test  
 D) Source → Test → Build → Deploy → Rollback  
 
-### 정답: C
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: C**
+
+**해설:**
 현대적인 CI/CD 파이프라인은 품질과 보안을 모두 보장해야 합니다.
 
 **각 스테이지의 중요성**:
@@ -593,6 +640,7 @@ DAST (Dynamic Application Security Testing):
 - 성능 기준선 검증
 
 **관련 개념**: CI/CD 파이프라인 설계, DevSecOps, 품질 게이트
+</details>
 
 ---
 
@@ -612,9 +660,12 @@ B) Reserved Concurrency: 1000, Provisioned Concurrency: 200
 C) Reserved Concurrency만 200으로 설정  
 D) Provisioned Concurrency만 100으로 설정  
 
-### 정답: A
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: A**
+
+**해설:**
 Lambda 동시성 관리는 안정성과 성능을 모두 고려해야 합니다.
 
 **시나리오 요구사항**:
@@ -657,6 +708,7 @@ Lambda 동시성 관리는 안정성과 성능을 모두 고려해야 합니다.
 ```
 
 **관련 개념**: Lambda 동시성, Reserved vs Provisioned Concurrency
+</details>
 
 ---
 
@@ -669,9 +721,12 @@ B) SQS + SNS + Lambda
 C) ALB + ECS + ElastiCache  
 D) CloudFront + S3 + DynamoDB  
 
-### 정답: B
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: B**
+
+**해설:**
 마이크로서비스의 비동기 통신은 느슨한 결합과 확장성을 제공합니다.
 
 **비동기 통신의 특징**:
@@ -717,6 +772,7 @@ D) CloudFront + S3 + DynamoDB
 - 자동 재시도 및 DLQ 지원
 
 **관련 개념**: 마이크로서비스 통신 패턴, 이벤트 기반 아키텍처
+</details>
 
 ---
 
@@ -736,9 +792,12 @@ B) 각 리전에 완전한 서비스 스택 배포 + Route 53 Geolocation
 C) CloudFront + API Gateway + Lambda@Edge + 리전별 데이터 저장소  
 D) Global Load Balancer + 단일 데이터베이스 + 다중 리전 캐시  
 
-### 정답: B
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: B**
+
+**해설:**
 글로벌 서비스에서 데이터 규정 준수와 고가용성을 동시에 만족하려면 리전별 완전 배포가 필요합니다.
 
 **요구사항 분석**:
@@ -794,6 +853,7 @@ D) Global Load Balancer + 단일 데이터베이스 + 다중 리전 캐시
 - 글로벌 데이터: DynamoDB Global Tables 또는 교차 리전 복제
 
 **관련 개념**: 글로벌 아키텍처, 데이터 주권, 지역별 규정 준수
+</details>
 
 ---
 

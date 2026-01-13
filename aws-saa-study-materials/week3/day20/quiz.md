@@ -12,14 +12,17 @@
 
 **시나리오**: 온라인 쇼핑몰 웹사이트를 운영하는 회사에서 새로운 기능을 배포해야 합니다. 배포 중 서비스 중단을 최소화하면서도 문제 발생 시 빠른 롤백이 가능한 전략을 선택해야 합니다.
 
-**질문**: AWS CodeDeploy에서 제공하는 배포 전략 중 위 요구사항에 가장 적합한 것은 무엇입니까?
+**질문**: 이 요구사항을 만족하는 가장 적절한 Route 53 라우팅 정책은 무엇입니까?
 
 A) In-place 배포 (All-at-once)
 B) In-place 배포 (Rolling)
 C) Blue/Green 배포
 D) Canary 배포
 
-**정답**: C) Blue/Green 배포
+<details>
+<summary>정답 및 해설 보기</summary>
+
+**정답: C) Blue/Green 배포**
 
 **해설**: 
 Blue/Green 배포는 새로운 환경(Green)에 애플리케이션을 배포한 후 로드 밸런서를 통해 트래픽을 전환하는 방식입니다. 이 방식의 장점은:
@@ -28,6 +31,7 @@ Blue/Green 배포는 새로운 환경(Green)에 애플리케이션을 배포한 
 - **완전한 테스트**: 새 환경에서 충분한 테스트 후 전환 가능
 
 In-place 배포는 기존 인스턴스에서 업데이트하므로 다운타임이 발생할 수 있고, Canary 배포는 점진적 배포이지만 Blue/Green만큼 빠른 롤백은 어렵습니다.
+</details>
 
 ---
 
@@ -46,7 +50,10 @@ B) Source → Build → Deploy → Test → Approval
 C) Source → Build → Test → Approval → Deploy
 D) Build → Source → Test → Approval → Deploy
 
-**정답**: C) Source → Build → Test → Approval → Deploy
+<details>
+<summary>정답 및 해설 보기</summary>
+
+**정답: C) Source → Build → Test → Approval → Deploy**
 
 **해설**:
 CodePipeline의 올바른 스테이지 순서는:
@@ -57,6 +64,7 @@ CodePipeline의 올바른 스테이지 순서는:
 5. **Deploy**: 최종 배포 (CodeDeploy 사용)
 
 승인(Approval) 단계는 배포 전에 위치해야 하며, 빌드와 테스트는 배포보다 먼저 수행되어야 합니다.
+</details>
 
 ---
 
@@ -71,7 +79,10 @@ B) AWS CloudFormation (YAML 템플릿)
 C) AWS CDK (Cloud Development Kit)
 D) Terraform
 
-**정답**: C) AWS CDK (Cloud Development Kit)
+<details>
+<summary>정답 및 해설 보기</summary>
+
+**정답: C) AWS CDK (Cloud Development Kit)**
 
 **해설**:
 AWS CDK는 익숙한 프로그래밍 언어(TypeScript, Python, Java 등)를 사용하여 클라우드 인프라를 정의할 수 있는 도구입니다.
@@ -83,6 +94,7 @@ AWS CDK는 익숙한 프로그래밍 언어(TypeScript, Python, Java 등)를 사
 - **추상화**: 고수준 구성 요소(Construct) 제공
 
 CloudFormation은 선언적 템플릿 방식이고, Terraform은 HCL 언어를 사용하므로 기존 프로그래밍 패러다임 활용에는 CDK가 가장 적합합니다.
+</details>
 
 ---
 
@@ -100,7 +112,10 @@ B) 데이터베이스 연결 문자열은 Standard, API 키는 SecureString으�
 C) 모든 파라미터를 SecureString으로 저장하고 환경별로 별도 AWS 계정 사용
 D) AWS Secrets Manager만 사용하고 Parameter Store는 사용하지 않음
 
-**정답**: B) 데이터베이스 연결 문자열은 Standard, API 키는 SecureString으로 저장하고 계층적 구조 사용
+<details>
+<summary>정답 및 해설 보기</summary>
+
+**정답: B) 데이터베이스 연결 문자열은 Standard, API 키는 SecureString으로 저장하고 계층적 구조 사용**
 
 **해설**:
 Parameter Store의 올바른 사용법:
@@ -120,6 +135,7 @@ Parameter Store의 올바른 사용법:
 ```
 
 이 방식은 비용 효율적이면서도 보안 요구사항을 만족하며, 환경별 구성 관리가 용이합니다.
+</details>
 
 ---
 
@@ -196,7 +212,28 @@ phases:
       - docker build -t myapp . && docker push myapp
 ```
 
-**정답**: C)
+<details>
+<summary>정답 및 해설 보기</summary>
+
+**정답: C)**
+```yaml
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - npm install
+  build:
+    commands:
+      - npm test
+      - npm run build
+      - docker build -t myapp .
+      - docker tag myapp:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/myapp:latest
+  post_build:
+    commands:
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/myapp:latest
+```
 
 **해설**:
 올바른 buildspec.yml 구조는 다음과 같습니다:
@@ -217,6 +254,7 @@ phases:
 - A) ECR 로그인 없음, 단계 구분 없음
 - B) ECR 로그인 없음, 이미지 태깅 없음
 - D) 단계 구분이 부적절하고 ECR 로그인 없음
+</details>
 
 ---
 

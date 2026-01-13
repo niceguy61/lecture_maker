@@ -8,6 +8,9 @@ B) AWS Cost and Usage Reports (CUR)
 C) AWS Budgets  
 D) AWS Trusted Advisor  
 
+<details>
+<summary>정답 및 해설</summary>
+
 **정답: B) AWS Cost and Usage Reports (CUR)**
 
 **해설:**
@@ -16,6 +19,8 @@ AWS Cost and Usage Reports (CUR)는 AWS에서 제공하는 가장 상세하고 �
 - A) Cost Explorer는 시각화 도구이지만 CUR만큼 상세하지 않음
 - C) Budgets는 예산 설정 및 모니터링 도구
 - D) Trusted Advisor는 권장사항 제공 도구
+
+</details>
 
 ---
 
@@ -27,6 +32,9 @@ B) Spot Instances
 C) Standard Reserved Instances  
 D) Convertible Reserved Instances  
 
+<details>
+<summary>정답 및 해설</summary>
+
 **정답: D) Convertible Reserved Instances**
 
 **해설:**
@@ -35,6 +43,8 @@ Convertible Reserved Instances는 1-3년 약정으로 최대 54%까지 할인받
 - A) On-Demand는 유연하지만 가장 비쌈
 - B) Spot은 가장 저렴하지만 중단 위험이 있음
 - C) Standard RI는 더 큰 할인을 제공하지만 변경 불가
+
+</details>
 
 ---
 

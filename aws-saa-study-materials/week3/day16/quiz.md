@@ -17,10 +17,14 @@ B) 사용자와 가장 가까운 위치에서 콘텐츠를 캐시하고 제공�
 C) Origin 서버와 동일한 위치에 있는 백업 서버  
 D) CloudFront Distribution을 관리하는 중앙 서버  
 
-**정답**: B
+<details>
+<summary>정답 및 해설 보기</summary>
+
+**정답: B**
 
 **해설**: 
 Edge Location은 사용자와 가장 가까운 지리적 위치에 배치된 캐시 서버로, 콘텐츠를 캐시하여 사용자에게 빠르게 제공하는 역할을 합니다. AWS는 전 세계 400개 이상의 Edge Location을 운영하고 있으며, 이는 AWS 리전보다 훨씬 많은 수입니다. Edge Location은 사용자의 요청에 대해 캐시된 콘텐츠가 있으면 즉시 제공하고, 없으면 Origin 서버에서 콘텐츠를 가져와 캐시한 후 사용자에게 제공합니다.
+</details>
 
 ---
 
@@ -33,10 +37,14 @@ B) S3 버킷에 대한 직접 접근을 차단하고 CloudFront를 통해서만 
 C) S3 버킷의 스토리지 비용을 절약하기 위해  
 D) CloudFront Distribution의 배포 속도를 높이기 위해  
 
-**정답**: B
+<details>
+<summary>정답 및 해설 보기</summary>
+
+**정답: B**
 
 **해설**: 
 Origin Access Control (OAC)은 S3 버킷에 대한 보안을 강화하는 기능입니다. OAC를 설정하면 S3 버킷에 대한 직접 접근을 차단하고, 오직 CloudFront를 통해서만 콘텐츠에 접근할 수 있도록 제한합니다. 이를 통해 콘텐츠의 무단 접근을 방지하고, 모든 요청이 CloudFront를 거치도록 하여 캐싱의 이점을 최대화할 수 있습니다. OAC는 이전의 Origin Access Identity (OAI)를 대체하는 더 안전하고 기능이 향상된 방식입니다.
+</details>
 
 ---
 
@@ -49,10 +57,14 @@ B) Content Update
 C) Cache Invalidation  
 D) Origin Sync  
 
-**정답**: C
+<details>
+<summary>정답 및 해설 보기</summary>
+
+**정답: C**
 
 **해설**: 
 Cache Invalidation(캐시 무효화)은 CloudFront Edge Location에 캐시된 콘텐츠를 강제로 삭제하는 기능입니다. 이를 통해 Origin 서버의 콘텐츠가 업데이트되었을 때, TTL이 만료되기 전에도 사용자가 최신 콘텐츠를 받을 수 있도록 할 수 있습니다. 무효화는 특정 파일(`/images/logo.png`), 와일드카드(`/images/*`), 또는 전체 콘텐츠(`/*`)에 대해 수행할 수 있습니다. 단, 무효화 요청은 비용이 발생하므로(월 1,000건까지 무료) 신중하게 사용해야 합니다.
+</details>
 
 ---
 
@@ -65,10 +77,14 @@ B) Signed URLs and Signed Cookies
 C) Security Groups  
 D) Network ACLs  
 
-**정답**: B
+<details>
+<summary>정답 및 해설 보기</summary>
+
+**정답: B**
 
 **해설**: 
 Signed URLs와 Signed Cookies는 CloudFront에서 프리미엄 콘텐츠나 제한된 콘텐츠에 대한 접근을 제어하는 기능입니다. Signed URL은 개별 파일에 대한 시간 제한 접근을 제공하며, 주로 다운로드 링크나 개별 비디오 파일에 사용됩니다. Signed Cookie는 여러 파일이나 웹사이트 전체에 대한 접근을 제어할 때 사용되며, 사용자 세션 관리에 적합합니다. 이 기능들을 통해 인증된 사용자만 특정 콘텐츠에 접근할 수 있도록 제한할 수 있습니다.
+</details>
 
 ---
 
@@ -88,7 +104,10 @@ B) Price Class All + 압축 활성화 + Geo Restriction 설정 + Redirect HTTP t
 C) Price Class 200 + 압축 비활성화 + WAF 설정 + HTTPS Only  
 D) Price Class All + 압축 활성화 + Security Groups + HTTP/HTTPS 모두 허용  
 
-**정답**: B
+<details>
+<summary>정답 및 해설 보기</summary>
+
+**정답: B**
 
 **해설**: 
 글로벌 서비스를 위해서는 Price Class All을 사용하여 전 세계 모든 Edge Location을 활용해야 최고의 성능을 제공할 수 있습니다. 텍스트 기반 파일의 전송 속도 향상을 위해서는 압축(Compression)을 활성화해야 합니다. 특정 국가 접근 차단을 위해서는 Geo Restriction 기능을 사용하고, HTTPS 사용 강제를 위해서는 "Redirect HTTP to HTTPS" 정책을 설정해야 합니다. 
@@ -97,6 +116,7 @@ D) Price Class All + 압축 활성화 + Security Groups + HTTP/HTTPS 모두 허�
 - 압축 활성화: HTML, CSS, JS 파일 크기 감소로 전송 속도 향상
 - Geo Restriction: 국가별 접근 제어
 - Redirect HTTP to HTTPS: 모든 HTTP 요청을 HTTPS로 자동 리디렉션
+</details>
 
 ---
 

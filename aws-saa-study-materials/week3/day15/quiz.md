@@ -17,9 +17,12 @@ B) HTTP/HTTPS 트래픽을 처리할 수 있다
 C) 고정 IP 주소를 제공한다  
 D) 경로 기반 라우팅을 지원한다  
 
-### 정답: C
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: C**
+
+**해설:**
 Application Load Balancer는 고정 IP 주소를 제공하지 않습니다. 고정 IP 주소를 제공하는 것은 Network Load Balancer(NLB)의 특징입니다.
 
 - **A) 올바름**: ALB는 OSI 7계층에서 동작하여 HTTP 헤더, URL 경로 등을 기반으로 라우팅 결정을 할 수 있습니다.
@@ -28,6 +31,7 @@ Application Load Balancer는 고정 IP 주소를 제공하지 않습니다. 고�
 - **D) 올바름**: ALB는 URL 경로에 따라 다른 Target Group으로 트래픽을 라우팅할 수 있습니다.
 
 **관련 개념**: Load Balancer 종류, ALB vs NLB 차이점
+</details>
 
 ---
 
@@ -42,9 +46,12 @@ B) Step Scaling
 C) Target Tracking Scaling  
 D) Scheduled Scaling  
 
-### 정답: C
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: C**
+
+**해설:**
 Target Tracking Scaling이 이 시나리오에 가장 적합합니다.
 
 - **A) Simple Scaling**: 단일 임계값 기반으로 고정된 수만큼 확장/축소하므로, 세밀한 조정이 어렵습니다.
@@ -53,6 +60,7 @@ Target Tracking Scaling이 이 시나리오에 가장 적합합니다.
 - **D) Scheduled Scaling**: 예측 가능한 트래픽 패턴에 적합하지만, 급작스러운 트래픽 변화에는 대응할 수 없습니다.
 
 **관련 개념**: Auto Scaling 정책 종류, Target Tracking의 장점
+</details>
 
 ---
 
@@ -65,9 +73,12 @@ B) ELB Health Check가 실패하면 인스턴스를 즉시 종료한다
 C) ELB Health Check와 EC2 Health Check를 모두 사용하여 더 엄격하게 상태를 확인한다  
 D) Health Check Grace Period 동안은 모든 Health Check를 무시한다  
 
-### 정답: C
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: C**
+
+**해설:**
 Auto Scaling Group에서 ELB Health Check를 활성화하면 ELB와 EC2 Health Check를 모두 사용합니다.
 
 - **A) 틀림**: ELB Health Check를 활성화하면 EC2 Health Check와 함께 사용됩니다.
@@ -78,6 +89,7 @@ Auto Scaling Group에서 ELB Health Check를 활성화하면 ELB와 EC2 Health C
 - **D) 틀림**: Health Check Grace Period는 새로 시작된 인스턴스에 대해서만 적용되며, 이 기간 동안 Health Check 실패로 인한 종료를 방지합니다.
 
 **관련 개념**: Health Check 종류, Grace Period, ASG와 ELB 연동
+</details>
 
 ---
 
@@ -90,9 +102,12 @@ B) IP 주소 (온프레미스 서버)
 C) Lambda 함수  
 D) CloudFront 배포  
 
-### 정답: D
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: D**
+
+**해설:**
 CloudFront 배포는 ALB의 Target Group에 직접 등록할 수 없습니다.
 
 - **A) 가능**: EC2 인스턴스는 가장 일반적인 Target Group 대상입니다.
@@ -106,6 +121,7 @@ CloudFront 배포는 ALB의 Target Group에 직접 등록할 수 없습니다.
 ```
 
 **관련 개념**: Target Group 대상 유형, CloudFront와 ALB 관계
+</details>
 
 ---
 
@@ -127,9 +143,12 @@ B) 게임 API용 NLB와 웹 페이지용 ALB를 각각 구성
 C) NLB 하나로 포트 기반 라우팅을 사용하여 두 서비스 모두 처리  
 D) ALB와 Scheduled Auto Scaling만 사용  
 
-### 정답: B
+<details>
+<summary>정답 및 해설 보기</summary>
 
-### 해설:
+**정답: B**
+
+**해설:**
 각 서비스의 특성에 맞는 Load Balancer를 선택하는 것이 최적입니다.
 
 **분석**:
@@ -151,6 +170,7 @@ D) ALB와 Scheduled Auto Scaling만 사용
 ```
 
 **관련 개념**: Load Balancer 선택 기준, 서비스별 요구사항 분석, 하이브리드 아키텍처
+</details>
 
 ---
 
