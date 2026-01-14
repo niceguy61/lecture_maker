@@ -350,9 +350,9 @@ resource "aws_cloudfront" "netflix-cdn-distribution" {
 
 ```mermaid
 graph LR
-    D1[Day 1:<br/>AWS 개요 및 글로벌 인프라]
-    D16[Day 16:<br/>SNS (Simple Notification Service) 및 CloudFront]
-    D17[Day 17:<br/>Route 53]
+    D1[Day 1: AWS 개요 및 글로벌 인프라]
+    D16[Day 16: SNS (Simple Notification Service) 및 CloudFront]
+    D17[Day 17: Route 53]
 
     D1 -.확장.-> D16
     D1 -.확장.-> D17
