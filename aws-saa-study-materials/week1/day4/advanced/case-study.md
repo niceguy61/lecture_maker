@@ -98,14 +98,14 @@ graph TB
 - **EC2 Instances** (Day 3): Day 3의 EC2 (Elastic Compute Cloud) 기초와 연계
 - **ALB** (Day 13): Day 13의 ELB (Elastic Load Balancing)와 연계
 
-#### {supporting_service_1}
+#### Load Balancing
 
-**역할**: {service_role_description}
+**역할**: 트래픽 분산 및 고가용성 보장
 
 **구성 방법**:
-- {config_summary}
+- 로드 밸런서 생성 및 대상 그룹 구성
 
-**연계 방식**: {integration_method}
+**연계 방식**: Target Group Integration
 
 ### 서비스 간 데이터 플로우
 
@@ -123,17 +123,17 @@ sequenceDiagram
 ```
 
 **플로우 설명**:
-1. **사용자 요청** → {service_a}
-   - {flow_step_1_description}
+1. **사용자 요청** → Auto Scaling
+   - 사용자 요청을 받아 처리 시작
    
-2. **{service_a}** → **{service_b}** (Day 4의 주요 서비스)
-   - {flow_step_2_description}
+2. **Auto Scaling** → **Load Balancing** (Day 4의 주요 서비스)
+   - 비즈니스 로직 처리 및 데이터 변환
    
-3. **{service_b}** → **{service_c}**
-   - {flow_step_3_description}
+3. **Load Balancing** → **Data Storage**
+   - 데이터 저장 및 영속화
 
 4. **응답 반환** → 사용자
-   - {flow_step_4_description}
+   - 처리 결과를 사용자에게 반환
 
 ---
 
@@ -191,34 +191,34 @@ sequenceDiagram
 #### CloudFormation 템플릿 (선택사항)
 
 ```yaml
-# {resource_name}-stack.yaml
+# day4-resource-stack.yaml
 AWSTemplateFormatVersion: '2010-09-09'
-Description: '{case_study_name} - Auto Scaling 구성'
+Description: 'Uber - 실시간 차량 매칭을 위한 고가용성 컴퓨팅 - Auto Scaling 구성'
 
 Resources:
-  {ResourceLogicalId}:
-    Type: AWS::{ServiceNamespace}::{ResourceType}
+  Day4Resource:
+    Type: AWS::AutoScaling::Resource
     Properties:
-      {Property1}: {Value1}
-      {Property2}: {Value2}
+      Name: day4-resource
+      Type: Standard
       Tags:
         - Key: Project
-          Value: {project_name}
+          Value: day4-project
         - Key: Environment
-          Value: {environment}
+          Value: production
 ```
 
 #### Terraform 예시 (선택사항)
 
 ```hcl
 # main.tf
-resource "aws_{resource_type}" "{resource_name}" {
-  {property_1} = "{value_1}"
-  {property_2} = "{value_2}"
+resource "aws_auto_scaling" "day4-resource" {
+  name = "day4-resource"
+  type = "standard"
   
   tags = {
-    Project     = "{project_name}"
-    Environment = "{environment}"
+    Project     = "day4-project"
+    Environment = "production"
   }
 }
 ```
@@ -227,16 +227,16 @@ resource "aws_{resource_type}" "{resource_name}" {
 
 #### CloudWatch 메트릭 구성
 
-**Console 경로**: CloudWatch > Metrics > {service_namespace}
+**Console 경로**: CloudWatch > Metrics > AutoScaling
 
 **핵심 메트릭**:
-- **응답 시간**: {metric_description_1}
-  - 정상 범위: {normal_range_1}
-  - 경고 임계값: {warning_threshold_1}
+- **응답 시간**: 평균 응답 시간 측정
+  - 정상 범위: < 100ms
+  - 경고 임계값: > 200ms
   
-- **처리량**: {metric_description_2}
-  - 정상 범위: {normal_range_2}
-  - 경고 임계값: {warning_threshold_2}
+- **처리량**: 초당 처리 요청 수
+  - 정상 범위: > 1000 TPS
+  - 경고 임계값: < 500 TPS
 
 #### 알람 설정
 
@@ -244,12 +244,12 @@ resource "aws_{resource_type}" "{resource_name}" {
 
 **알람 구성**:
 ```yaml
-알람명: {alarm_name}
-메트릭: {metric_name}
-조건: {condition} (예: >= 80%)
-기간: {period} (예: 5분)
-평가 기간: {evaluation_periods} (예: 2회 연속)
-알림: {sns_topic_arn}
+알람명: day4-high-latency-alarm
+메트릭: ResponseTime
+조건: >= (예: >= 80%)
+기간: 5분 (예: 5분)
+평가 기간: 2회 연속 (예: 2회 연속)
+알림: arn:aws:sns:ap-northeast-2:123456789012:alerts
 ```
 
 #### 대시보드 구성
@@ -257,9 +257,9 @@ resource "aws_{resource_type}" "{resource_name}" {
 **Console 경로**: CloudWatch > Dashboards > Create dashboard
 
 **위젯 구성**:
-- {widget_1}: {metric_visualization_1}
-- {widget_2}: {metric_visualization_2}
-- {widget_3}: {metric_visualization_3}
+- 응답 시간 그래프: 시계열 라인 차트
+- 처리량 그래프: 시계열 라인 차트
+- 에러율 그래프: 시계열 라인 차트
 
 ---
 
@@ -499,7 +499,7 @@ graph LR
 `: 크로스 데이 통합 다이어그램 코드
 
 **메트릭 및 수치**:
-- `{metric_name}`: 메트릭 이름
+- `ResponseTime`: 메트릭 이름
 - `{before_value}`: 개선 전 값
 - `{after_value}`: 개선 후 값
 - `{improvement}`: 개선율 (%)

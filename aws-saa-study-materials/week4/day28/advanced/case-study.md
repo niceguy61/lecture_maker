@@ -94,14 +94,14 @@ graph TB
 - **Regions** (Day 1): Day 1의 AWS 개요 및 글로벌 인프라와 연계
 - **IAM Users** (Day 2): Day 2의 IAM (Identity and Access Management)와 연계
 
-#### {supporting_service_1}
+#### CloudWatch
 
-**역할**: {service_role_description}
+**역할**: 모니터링 및 알람 기능 제공
 
 **구성 방법**:
-- {config_summary}
+- 메트릭 수집 및 알람 설정
 
-**연계 방식**: {integration_method}
+**연계 방식**: Monitoring Integration
 
 ### 서비스 간 데이터 플로우
 
@@ -119,17 +119,17 @@ sequenceDiagram
 ```
 
 **플로우 설명**:
-1. **사용자 요청** → {service_a}
-   - {flow_step_1_description}
+1. **사용자 요청** → All Services Integration
+   - 사용자 요청을 받아 처리 시작
    
-2. **{service_a}** → **{service_b}** (Day 28의 주요 서비스)
-   - {flow_step_2_description}
+2. **All Services Integration** → **Supporting Service** (Day 28의 주요 서비스)
+   - 비즈니스 로직 처리 및 데이터 변환
    
-3. **{service_b}** → **{service_c}**
-   - {flow_step_3_description}
+3. **Supporting Service** → **Data Storage**
+   - 데이터 저장 및 영속화
 
 4. **응답 반환** → 사용자
-   - {flow_step_4_description}
+   - 처리 결과를 사용자에게 반환
 
 ---
 
@@ -187,34 +187,34 @@ sequenceDiagram
 #### CloudFormation 템플릿 (선택사항)
 
 ```yaml
-# {resource_name}-stack.yaml
+# day28-resource-stack.yaml
 AWSTemplateFormatVersion: '2010-09-09'
-Description: '{case_study_name} - All Services Integration 구성'
+Description: 'Startup Best Practices - 스타트업을 위한 종합 AWS 아키텍처 설계 - All Services Integration 구성'
 
 Resources:
-  {ResourceLogicalId}:
-    Type: AWS::{ServiceNamespace}::{ResourceType}
+  Day28Resource:
+    Type: AWS::AllServicesIntegration::Resource
     Properties:
-      {Property1}: {Value1}
-      {Property2}: {Value2}
+      Name: day28-resource
+      Type: Standard
       Tags:
         - Key: Project
-          Value: {project_name}
+          Value: day28-project
         - Key: Environment
-          Value: {environment}
+          Value: production
 ```
 
 #### Terraform 예시 (선택사항)
 
 ```hcl
 # main.tf
-resource "aws_{resource_type}" "{resource_name}" {
-  {property_1} = "{value_1}"
-  {property_2} = "{value_2}"
+resource "aws_all_services_integration" "day28-resource" {
+  name = "day28-resource"
+  type = "standard"
   
   tags = {
-    Project     = "{project_name}"
-    Environment = "{environment}"
+    Project     = "day28-project"
+    Environment = "production"
   }
 }
 ```
@@ -223,16 +223,16 @@ resource "aws_{resource_type}" "{resource_name}" {
 
 #### CloudWatch 메트릭 구성
 
-**Console 경로**: CloudWatch > Metrics > {service_namespace}
+**Console 경로**: CloudWatch > Metrics > AllServicesIntegration
 
 **핵심 메트릭**:
-- **응답 시간**: {metric_description_1}
-  - 정상 범위: {normal_range_1}
-  - 경고 임계값: {warning_threshold_1}
+- **응답 시간**: 평균 응답 시간 측정
+  - 정상 범위: < 100ms
+  - 경고 임계값: > 200ms
   
-- **처리량**: {metric_description_2}
-  - 정상 범위: {normal_range_2}
-  - 경고 임계값: {warning_threshold_2}
+- **처리량**: 초당 처리 요청 수
+  - 정상 범위: > 1000 TPS
+  - 경고 임계값: < 500 TPS
 
 #### 알람 설정
 
@@ -240,12 +240,12 @@ resource "aws_{resource_type}" "{resource_name}" {
 
 **알람 구성**:
 ```yaml
-알람명: {alarm_name}
-메트릭: {metric_name}
-조건: {condition} (예: >= 80%)
-기간: {period} (예: 5분)
-평가 기간: {evaluation_periods} (예: 2회 연속)
-알림: {sns_topic_arn}
+알람명: day28-high-latency-alarm
+메트릭: ResponseTime
+조건: >= (예: >= 80%)
+기간: 5분 (예: 5분)
+평가 기간: 2회 연속 (예: 2회 연속)
+알림: arn:aws:sns:ap-northeast-2:123456789012:alerts
 ```
 
 #### 대시보드 구성
@@ -253,9 +253,9 @@ resource "aws_{resource_type}" "{resource_name}" {
 **Console 경로**: CloudWatch > Dashboards > Create dashboard
 
 **위젯 구성**:
-- {widget_1}: {metric_visualization_1}
-- {widget_2}: {metric_visualization_2}
-- {widget_3}: {metric_visualization_3}
+- 응답 시간 그래프: 시계열 라인 차트
+- 처리량 그래프: 시계열 라인 차트
+- 에러율 그래프: 시계열 라인 차트
 
 ---
 
@@ -491,7 +491,7 @@ graph LR
 `: 크로스 데이 통합 다이어그램 코드
 
 **메트릭 및 수치**:
-- `{metric_name}`: 메트릭 이름
+- `ResponseTime`: 메트릭 이름
 - `{before_value}`: 개선 전 값
 - `{after_value}`: 개선 후 값
 - `{improvement}`: 개선율 (%)
