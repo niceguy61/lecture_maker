@@ -24,6 +24,7 @@ from src.config import (
     AWS_PRICING_BASE_URL,
     AWS_ARCHITECTURE_CENTER_URL
 )
+from src.generators.korean_localization_processor import get_korean_localization_processor
 
 
 class BestPracticesGenerator:
@@ -38,6 +39,7 @@ class BestPracticesGenerator:
         self.template_path = template_path or TEMPLATES_ROOT / "best-practices-template.md"
         self.output_base_path = output_base_path or STUDY_MATERIALS_ROOT
         self.template_content = self.load_template()
+        self.localization_processor = get_korean_localization_processor()
     
     def load_template(self) -> str:
         """템플릿 파일 로드"""
@@ -445,8 +447,11 @@ class BestPracticesGenerator:
 
     
     def populate_template(self, day_number: int) -> str:
-        """템플릿에 데이터 채우기"""
+        """템플릿에 데이터 채우기 및 한국어 현지화 적용"""
         config = self.get_daily_config(day_number)
+        
+        # 현지화된 템플릿 변수 가져오기
+        localized_vars = self.localization_processor.get_localized_template_vars(day_number)
         
         # primary_services를 문자열로 변환
         primary_services_str = ", ".join(config["primary_services"])
@@ -491,10 +496,16 @@ class BestPracticesGenerator:
         summary_data = self.generate_summary_sections(day_number, config)
         replacements.update(summary_data)
         
+        # 현지화된 변수 추가
+        replacements.update(localized_vars)
+        
         # 템플릿 치환
         content = self.template_content
         for placeholder, value in replacements.items():
             content = content.replace(placeholder, value)
+        
+        # 한국어 현지화 적용 (AWS 서비스명 등에 한영 병기)
+        content = self.localization_processor.localize_content(content, day_number)
         
         return content
     

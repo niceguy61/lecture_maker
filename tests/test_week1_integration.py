@@ -138,11 +138,25 @@ class TestWeek1Integration:
         for day in week1_days:
             diagrams_path = week1_base_path / f"day{day}" / "advanced" / "architecture-diagrams"
             
-            for diagram_file in diagrams_path.glob("*.md"):
+            # Check both .mmd and .md files
+            diagram_files = list(diagrams_path.glob("*.mmd")) + list(diagrams_path.glob("*.md"))
+            
+            for diagram_file in diagram_files:
                 content = diagram_file.read_text(encoding='utf-8')
                 
-                # Check for Mermaid code blocks
-                mermaid_blocks = re.findall(r'```mermaid\n(.*?)```', content, re.DOTALL)
+                # For .mmd files, the entire content is the diagram
+                # For .md files, look for Mermaid code blocks
+                if diagram_file.suffix == '.mmd':
+                    # Check if content starts with ```mermaid or is raw mermaid
+                    if content.strip().startswith('```mermaid'):
+                        mermaid_blocks = re.findall(r'```mermaid\n(.*?)```', content, re.DOTALL)
+                    else:
+                        # Raw mermaid content
+                        mermaid_blocks = [content]
+                else:
+                    # .md files - extract mermaid blocks
+                    mermaid_blocks = re.findall(r'```mermaid\n(.*?)```', content, re.DOTALL)
+                
                 assert len(mermaid_blocks) > 0, f"{diagram_file.name} has no Mermaid diagrams"
                 
                 # Basic syntax validation
@@ -250,7 +264,9 @@ class TestWeek1Integration:
             
             diagrams_path = day_path / "advanced" / "architecture-diagrams"
             if diagrams_path.exists():
-                summary["diagrams"] += len(list(diagrams_path.glob("*.md")))
+                # Count both .mmd and .md files
+                diagram_count = len(list(diagrams_path.glob("*.mmd"))) + len(list(diagrams_path.glob("*.md")))
+                summary["diagrams"] += diagram_count
             
             hands_on_path = day_path / "hands-on-console"
             if hands_on_path.exists():

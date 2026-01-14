@@ -19,6 +19,7 @@ from src.config import (
     TEMPLATES_ROOT, STUDY_MATERIALS_ROOT, AWS_DOCS_BASE_URL,
     AWS_PRICING_BASE_URL, AWS_ARCHITECTURE_CENTER_URL
 )
+from src.generators.korean_localization_processor import get_korean_localization_processor
 
 
 class CaseStudyGenerator:
@@ -27,6 +28,7 @@ class CaseStudyGenerator:
     def __init__(self):
         self.template_path = TEMPLATES_ROOT / "case-study-template.md"
         self.output_base_path = STUDY_MATERIALS_ROOT
+        self.localization_processor = get_korean_localization_processor()
         
     def load_template(self) -> str:
         """템플릿 파일 로드"""
@@ -424,7 +426,7 @@ class CaseStudyGenerator:
         return links
     
     def populate_template(self, day_number: int, template: str) -> str:
-        """템플릿 플레이스홀더 치환"""
+        """템플릿 플레이스홀더 치환 및 한국어 현지화 적용"""
         config = self.get_daily_config(day_number)
         company = self.generate_company_info(day_number)
         business_context = self.generate_business_context(day_number)
@@ -435,6 +437,9 @@ class CaseStudyGenerator:
         connections = self.generate_cross_day_connections(day_number)
         diagrams = self.generate_mermaid_diagrams(day_number)
         aws_links = self.generate_aws_links(day_number)
+        
+        # 현지화된 템플릿 변수 가져오기
+        localized_vars = self.localization_processor.get_localized_template_vars(day_number)
         
         # 기본 정보 치환
         replacements = {
@@ -641,10 +646,16 @@ class CaseStudyGenerator:
             "{author_name}": "AWS SAA Study Materials Generator",
         }
         
+        # 현지화된 변수 추가
+        replacements.update(localized_vars)
+        
         # 템플릿 치환
         result = template
         for placeholder, value in replacements.items():
             result = result.replace(placeholder, str(value))
+        
+        # 한국어 현지화 적용 (AWS 서비스명 등에 한영 병기)
+        result = self.localization_processor.localize_content(result, day_number)
         
         return result
 
