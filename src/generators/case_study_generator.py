@@ -194,54 +194,113 @@ class CaseStudyGenerator:
         config = self.get_daily_config(day_number)
         primary_service = config["primary_services"][0] if config["primary_services"] else "AWS Service"
         
-        steps = [
-            ImplementationStep(
-                step_number=1,
-                title=f"{primary_service} 생성 및 구성",
-                description=f"AWS Console을 통해 {primary_service} 리소스를 생성하고 기본 설정을 구성합니다.",
-                console_path=f"Services > [Category] > {primary_service}",
-                configuration={
-                    "Region": "ap-northeast-2 (서울)",
-                    "Name": f"day{day_number}-{primary_service.lower().replace(' ', '-')}",
-                },
-                verification=[
-                    "리소스 상태가 'Available' 또는 'Active'로 표시되는지 확인",
-                    "기본 설정이 올바르게 적용되었는지 검증"
-                ],
-                estimated_time="10-15분"
-            ),
-            ImplementationStep(
-                step_number=2,
-                title="보안 및 접근 제어 설정",
-                description="IAM 역할 및 보안 그룹을 구성하여 안전한 접근을 보장합니다.",
-                console_path="IAM > Roles > Create role",
-                configuration={
-                    "Trust Policy": "서비스 신뢰 관계 설정",
-                    "Permissions": "최소 권한 원칙 적용",
-                },
-                verification=[
-                    "IAM 역할이 올바르게 생성되었는지 확인",
-                    "보안 그룹 규칙이 적절히 설정되었는지 검증"
-                ],
-                estimated_time="5-10분"
-            ),
-            ImplementationStep(
-                step_number=3,
-                title="모니터링 및 알람 설정",
-                description="CloudWatch를 통해 핵심 메트릭을 모니터링하고 알람을 설정합니다.",
-                console_path="CloudWatch > Alarms > Create alarm",
-                configuration={
-                    "Metric": "주요 성능 지표",
-                    "Threshold": "임계값 설정",
-                    "Action": "SNS 알림 구성",
-                },
-                verification=[
-                    "알람이 정상적으로 생성되었는지 확인",
-                    "테스트 알림이 올바르게 전송되는지 검증"
-                ],
-                estimated_time="5-10분"
-            )
-        ]
+        # Day 1 (CloudFront) 특별 처리
+        if day_number == 1 and primary_service == "CloudFront":
+            steps = [
+                ImplementationStep(
+                    step_number=1,
+                    title="CloudFront Distribution 생성",
+                    description="AWS Console을 통해 CloudFront Distribution을 생성하고 Origin을 설정합니다.",
+                    console_path="Services > Networking & Content Delivery > CloudFront > Create Distribution",
+                    configuration={
+                        "Origin Domain": "example-bucket.s3.amazonaws.com 또는 ALB DNS",
+                        "Origin Protocol Policy": "HTTPS Only",
+                        "Viewer Protocol Policy": "Redirect HTTP to HTTPS",
+                        "Cache Policy": "CachingOptimized",
+                        "Price Class": "Use All Edge Locations (Best Performance)",
+                    },
+                    verification=[
+                        "Distribution 상태가 'Deployed'로 표시되는지 확인 (약 15-20분 소요)",
+                        "Distribution Domain Name (예: d111111abcdef8.cloudfront.net) 확인",
+                        "테스트 요청으로 콘텐츠가 정상적으로 제공되는지 검증"
+                    ],
+                    estimated_time="20-30분"
+                ),
+                ImplementationStep(
+                    step_number=2,
+                    title="Cache Behavior 및 최적화 설정",
+                    description="캐싱 동작을 구성하고 성능을 최적화합니다.",
+                    console_path="CloudFront > Distributions > [Distribution ID] > Behaviors",
+                    configuration={
+                        "Path Pattern": "기본값 (*) 또는 특정 경로 (예: /images/*)",
+                        "Compress Objects Automatically": "Yes (Gzip 압축 활성화)",
+                        "TTL Settings": "Min: 0, Max: 31536000, Default: 86400",
+                        "Query String Forwarding": "필요에 따라 설정",
+                    },
+                    verification=[
+                        "Cache Hit Ratio가 정상적으로 증가하는지 CloudWatch에서 확인",
+                        "압축이 적용되는지 응답 헤더 확인 (Content-Encoding: gzip)"
+                    ],
+                    estimated_time="10-15분"
+                ),
+                ImplementationStep(
+                    step_number=3,
+                    title="모니터링 및 알람 설정",
+                    description="CloudWatch를 통해 CloudFront 메트릭을 모니터링하고 알람을 설정합니다.",
+                    console_path="CloudWatch > Alarms > Create alarm",
+                    configuration={
+                        "Metric": "CloudFront > Per-Distribution Metrics > 4xxErrorRate",
+                        "Threshold": "> 5% for 2 consecutive periods",
+                        "Action": "SNS 토픽으로 알림 전송",
+                        "Additional Metrics": "Requests, BytesDownloaded, BytesUploaded",
+                    },
+                    verification=[
+                        "CloudWatch 대시보드에서 메트릭이 정상적으로 수집되는지 확인",
+                        "테스트 알람이 올바르게 트리거되는지 검증"
+                    ],
+                    estimated_time="10-15분"
+                )
+            ]
+        else:
+            # 기존 일반 서비스 구현 단계
+            steps = [
+                ImplementationStep(
+                    step_number=1,
+                    title=f"{primary_service} 생성 및 구성",
+                    description=f"AWS Console을 통해 {primary_service} 리소스를 생성하고 기본 설정을 구성합니다.",
+                    console_path=f"Services > [Category] > {primary_service}",
+                    configuration={
+                        "Region": "ap-northeast-2 (서울)",
+                        "Name": f"day{day_number}-{primary_service.lower().replace(' ', '-')}",
+                    },
+                    verification=[
+                        "리소스 상태가 'Available' 또는 'Active'로 표시되는지 확인",
+                        "기본 설정이 올바르게 적용되었는지 검증"
+                    ],
+                    estimated_time="10-15분"
+                ),
+                ImplementationStep(
+                    step_number=2,
+                    title="보안 및 접근 제어 설정",
+                    description="IAM 역할 및 보안 그룹을 구성하여 안전한 접근을 보장합니다.",
+                    console_path="IAM > Roles > Create role",
+                    configuration={
+                        "Trust Policy": "서비스 신뢰 관계 설정",
+                        "Permissions": "최소 권한 원칙 적용",
+                    },
+                    verification=[
+                        "IAM 역할이 올바르게 생성되었는지 확인",
+                        "보안 그룹 규칙이 적절히 설정되었는지 검증"
+                    ],
+                    estimated_time="5-10분"
+                ),
+                ImplementationStep(
+                    step_number=3,
+                    title="모니터링 및 알람 설정",
+                    description="CloudWatch를 통해 핵심 메트릭을 모니터링하고 알람을 설정합니다.",
+                    console_path="CloudWatch > Alarms > Create alarm",
+                    configuration={
+                        "Metric": "주요 성능 지표",
+                        "Threshold": "임계값 설정",
+                        "Action": "SNS 알림 구성",
+                    },
+                    verification=[
+                        "알람이 정상적으로 생성되었는지 확인",
+                        "테스트 알림이 올바르게 전송되는지 검증"
+                    ],
+                    estimated_time="5-10분"
+                )
+            ]
         
         return ImplementationDetails(
             steps=steps,
@@ -401,11 +460,11 @@ class CaseStudyGenerator:
     def _get_service_role_description(self, service_name: str) -> str:
         """서비스별 역할 설명 생성"""
         role_map = {
-            # 글로벌 인프라
-            "Regions": "AWS 리전 선택 및 글로벌 배포 전략",
-            "Availability Zones": "고가용성을 위한 다중 가용 영역 배포",
-            "Edge Locations": "CDN 및 엣지 컴퓨팅을 위한 글로벌 엣지 로케이션",
-            "CloudFront": "콘텐츠 전송 네트워크 (CDN) 및 글로벌 배포",
+            # 글로벌 인프라 (Day 1 - 개념 및 설계)
+            "Regions": "지리적으로 분리된 AWS 데이터센터 위치 - 지연시간 최소화, 규정 준수, 재해 복구를 위한 리전 선택",
+            "Availability Zones": "리전 내 물리적으로 분리된 데이터센터 - 단일 장애점 제거 및 고가용성 보장",
+            "Edge Locations": "CloudFront CDN의 전 세계 캐시 서버 - 사용자와 가까운 위치에서 콘텐츠 제공",
+            "CloudFront": "글로벌 콘텐츠 전송 네트워크(CDN) - 정적/동적 콘텐츠를 엣지 로케이션에서 캐싱 및 배포",
             
             # IAM
             "IAM Users": "사용자 계정 및 인증 관리",
@@ -533,11 +592,11 @@ class CaseStudyGenerator:
     def _get_config_summary(self, service_name: str) -> str:
         """서비스별 구성 요약 생성"""
         config_map = {
-            # 글로벌 인프라
-            "Regions": "리전 선택 및 글로벌 배포 전략 수립",
-            "Availability Zones": "다중 AZ 배포를 통한 고가용성 구성",
-            "Edge Locations": "엣지 로케이션 선택 및 CDN 구성",
-            "CloudFront": "배포 생성 및 오리진 설정",
+            # 글로벌 인프라 (Day 1 - 선택/설계 관점)
+            "Regions": "비즈니스 요구사항(지연시간, 규정 준수, 비용)에 따라 최적의 리전 선택",
+            "Availability Zones": "고가용성 확보를 위해 최소 2개 이상의 AZ에 리소스 분산 배치",
+            "Edge Locations": "CloudFront 배포 시 자동으로 전 세계 엣지 로케이션 활용",
+            "CloudFront": "배포 생성, 오리진 설정, 캐싱 동작 구성",
             
             # IAM
             "IAM Users": "사용자 생성 및 액세스 키 발급",
@@ -816,6 +875,31 @@ class CaseStudyGenerator:
         diagrams = self.generate_mermaid_diagrams(day_number)
         aws_links = self.generate_aws_links(day_number)
         
+        # Day 1 (CloudFront) 특별 처리
+        is_cloudfront_day = day_number == 1 and config['primary_services'][0] == "CloudFront"
+        
+        # Day 1 CloudFront용 특별 설정
+        if is_cloudfront_day:
+            primary_service_action = "생성"
+            primary_service_description = "CloudFront Distribution 생성 및 글로벌 콘텐츠 전송 네트워크 구성"
+            console_path_prefix = "Services > Networking & Content Delivery"
+            step1_title = "CloudFront Distribution 생성"
+            step1_description = "AWS Console을 통해 CloudFront Distribution을 생성하고 Origin을 설정합니다."
+            step1_console_path = "Services > Networking & Content Delivery > CloudFront > Create Distribution"
+            config_field_1_label = "Origin Domain"
+            config_field_2_label = "Viewer Protocol Policy"
+            config_field_3_label = "Price Class"
+        else:
+            primary_service_action = "생성"
+            primary_service_description = f"{config['primary_services'][0] if config['primary_services'] else 'AWS Service'} 리소스 생성 및 구성"
+            console_path_prefix = "Services > Compute"
+            step1_title = f"{config['primary_services'][0] if config['primary_services'] else 'AWS Service'} 생성"
+            step1_description = f"AWS Console을 통해 {config['primary_services'][0] if config['primary_services'] else 'AWS Service'} 리소스를 생성하고 기본 설정을 구성합니다."
+            step1_console_path = f"Services > Compute > {config['primary_services'][0] if config['primary_services'] else 'AWS Service'} > Create Resource"
+            config_field_1_label = "Name/ID"
+            config_field_2_label = "Region"
+            config_field_3_label = "Type"
+        
         # 기본 정보 치환
         replacements = {
             "{day_number}": str(day_number),
@@ -857,14 +941,14 @@ class CaseStudyGenerator:
             "{primary_service_1}": config["primary_services"][0] if config["primary_services"] else "AWS Service",
             "{selection_reason_1}": "높은 가용성 및 확장성 제공",
             "{selection_reason_2}": "관리형 서비스로 운영 부담 감소",
-            "{service_category}": "Compute" if "EC2" in str(config["primary_services"]) else "Storage",
+            "{service_category}": "Networking & Content Delivery" if is_cloudfront_day else ("Compute" if "EC2" in str(config["primary_services"]) else "Storage"),
             "{service_name}": config["primary_services"][0] if config["primary_services"] else "AWS Service",
-            "{config_item_1}": "Region",
-            "{config_value_1}": f"day{day_number}-resource",
-            "{config_item_2}": "Instance Type / Configuration",
-            "{config_value_2}": "Standard",
-            "{config_item_3}": "Auto Scaling",
-            "{config_value_3}": "활성화",
+            "{config_item_1}": "Origin Domain" if is_cloudfront_day else "Region",
+            "{config_value_1}": "example-bucket.s3.amazonaws.com" if is_cloudfront_day else f"day{day_number}-resource",
+            "{config_item_2}": "Viewer Protocol Policy" if is_cloudfront_day else "Instance Type / Configuration",
+            "{config_value_2}": "Redirect HTTP to HTTPS" if is_cloudfront_day else "Standard",
+            "{config_item_3}": "Price Class" if is_cloudfront_day else "Auto Scaling",
+            "{config_value_3}": "Use All Edge Locations" if is_cloudfront_day else "활성화",
             
             # 지원 서비스 (템플릿에서 사용되지만 누락된 변수들)
             "{supporting_service_1}": config["primary_services"][1] if len(config["primary_services"]) > 1 else "CloudWatch",
@@ -887,14 +971,14 @@ class CaseStudyGenerator:
             
             # CloudFormation/Terraform 템플릿 변수
             "{case_study_name}": f"{company.name} - {config['case_study_focus']}",
-            "{resource_name}": f"day{day_number}-resource",
-            "{ResourceLogicalId}": f"Day{day_number}Resource",
-            "{ServiceNamespace}": config["primary_services"][0].replace(" ", "") if config["primary_services"] else "Service",
-            "{ResourceType}": "Resource",
-            "{Property1}": "Name",
-            "{Value1}": f"day{day_number}-resource",
-            "{Property2}": "Type",
-            "{Value2}": "Standard",
+            "{resource_name}": f"netflix-cdn-distribution" if is_cloudfront_day else f"day{day_number}-resource",
+            "{ResourceLogicalId}": f"NetflixCDNDistribution" if is_cloudfront_day else f"Day{day_number}Resource",
+            "{ServiceNamespace}": "CloudFront" if is_cloudfront_day else (config["primary_services"][0].replace(" ", "") if config["primary_services"] else "Service"),
+            "{ResourceType}": "Distribution" if is_cloudfront_day else "Resource",
+            "{Property1}": "Origins" if is_cloudfront_day else "Name",
+            "{Value1}": "[{DomainName: netflix-content.s3.amazonaws.com}]" if is_cloudfront_day else f"day{day_number}-resource",
+            "{Property2}": "Enabled" if is_cloudfront_day else "Type",
+            "{Value2}": "true" if is_cloudfront_day else "Standard",
             "{project_name}": f"day{day_number}-project",
             "{environment}": "production",
             "{resource_type}": config["primary_services"][0].lower().replace(" ", "_") if config["primary_services"] else "resource",
@@ -904,24 +988,24 @@ class CaseStudyGenerator:
             "{value_2}": "standard",
             
             # 모니터링 관련 (템플릿에서 사용되지만 누락된 변수들)
-            "{service_namespace}": config["primary_services"][0].replace(" ", "") if config["primary_services"] else "AWS/Service",
-            "{metric_description_1}": "평균 응답 시간 측정",
-            "{normal_range_1}": "< 100ms",
-            "{warning_threshold_1}": "> 200ms",
-            "{metric_description_2}": "초당 처리 요청 수",
-            "{normal_range_2}": "> 1000 TPS",
-            "{warning_threshold_2}": "< 500 TPS",
-            "{alarm_name}": f"day{day_number}-high-latency-alarm",
-            "{metric_name}": "ResponseTime",
+            "{service_namespace}": "AWS/CloudFront" if is_cloudfront_day else (config["primary_services"][0].replace(" ", "") if config["primary_services"] else "AWS/Service"),
+            "{metric_description_1}": "CloudFront 요청 수 측정" if is_cloudfront_day else "평균 응답 시간 측정",
+            "{normal_range_1}": "> 1000 requests/min" if is_cloudfront_day else "< 100ms",
+            "{warning_threshold_1}": "< 100 requests/min" if is_cloudfront_day else "> 200ms",
+            "{metric_description_2}": "4xx 에러율 모니터링" if is_cloudfront_day else "초당 처리 요청 수",
+            "{normal_range_2}": "< 5%" if is_cloudfront_day else "> 1000 TPS",
+            "{warning_threshold_2}": "> 10%" if is_cloudfront_day else "< 500 TPS",
+            "{alarm_name}": f"day{day_number}-cloudfront-error-alarm" if is_cloudfront_day else f"day{day_number}-high-latency-alarm",
+            "{metric_name}": "4xxErrorRate" if is_cloudfront_day else "ResponseTime",
             "{condition}": ">=",
             "{period}": "5분",
             "{evaluation_periods}": "2회 연속",
             "{sns_topic_arn}": "arn:aws:sns:ap-northeast-2:123456789012:alerts",
-            "{widget_1}": "응답 시간 그래프",
+            "{widget_1}": "요청 수 그래프" if is_cloudfront_day else "응답 시간 그래프",
             "{metric_visualization_1}": "시계열 라인 차트",
-            "{widget_2}": "처리량 그래프",
+            "{widget_2}": "에러율 그래프" if is_cloudfront_day else "처리량 그래프",
             "{metric_visualization_2}": "시계열 라인 차트",
-            "{widget_3}": "에러율 그래프",
+            "{widget_3}": "데이터 전송량 그래프" if is_cloudfront_day else "에러율 그래프",
             "{metric_visualization_3}": "시계열 라인 차트",
             
             # 관련 서비스
@@ -934,22 +1018,22 @@ class CaseStudyGenerator:
             
             # 구현 세부사항
             "{primary_service}": config["primary_services"][0] if config["primary_services"] else "AWS Service",
-            "{category}": "Compute",
+            "{category}": "Networking & Content Delivery" if is_cloudfront_day else "Compute",
             "{service}": config["primary_services"][0] if config["primary_services"] else "AWS Service",
-            "{resource}": "Resource",
-            "{resource_name_example}": f"day{day_number}-resource",
-            "{region}": "ap-northeast-2",
-            "{config_field_1}": "Name",
-            "{config_value_1}": f"day{day_number}-resource",
-            "{config_field_2}": "Type",
-            "{config_value_2}": "Standard",
-            "{advanced_config_1}": "High Availability",
-            "{advanced_value_1}": "Multi-AZ 배포",
-            "{config_explanation_1}": "여러 가용 영역에 걸쳐 리소스 배포",
-            "{advanced_config_2}": "Backup",
-            "{advanced_value_2}": "자동 백업 활성화",
-            "{config_explanation_2}": "일일 자동 백업 및 7일 보관",
-            "{wait_time}": "5-10",
+            "{resource}": "Distribution" if is_cloudfront_day else "Resource",
+            "{resource_name_example}": f"netflix-cdn-distribution" if is_cloudfront_day else f"day{day_number}-resource",
+            "{region}": "Global (CloudFront는 글로벌 서비스)" if is_cloudfront_day else "ap-northeast-2",
+            "{config_field_1}": "Origin Domain" if is_cloudfront_day else "Name",
+            "{config_value_1}": "netflix-content.s3.amazonaws.com" if is_cloudfront_day else f"day{day_number}-resource",
+            "{config_field_2}": "Viewer Protocol Policy" if is_cloudfront_day else "Type",
+            "{config_value_2}": "Redirect HTTP to HTTPS" if is_cloudfront_day else "Standard",
+            "{advanced_config_1}": "Cache Behavior" if is_cloudfront_day else "High Availability",
+            "{advanced_value_1}": "CachingOptimized" if is_cloudfront_day else "Multi-AZ 배포",
+            "{config_explanation_1}": "최적화된 캐싱 정책 적용" if is_cloudfront_day else "여러 가용 영역에 걸쳐 리소스 배포",
+            "{advanced_config_2}": "Compress Objects" if is_cloudfront_day else "Backup",
+            "{advanced_value_2}": "Yes (Gzip 압축)" if is_cloudfront_day else "자동 백업 활성화",
+            "{config_explanation_2}": "자동 압축으로 전송 속도 향상" if is_cloudfront_day else "일일 자동 백업 및 7일 보관",
+            "{wait_time}": "15-20" if is_cloudfront_day else "5-10",
             "{related_service}": "CloudWatch",
             "{integration_feature}": "Monitoring",
             "{verification_step_1}": "메트릭이 정상적으로 수집되는지 확인",

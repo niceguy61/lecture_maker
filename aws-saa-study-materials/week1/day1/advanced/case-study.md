@@ -1,7 +1,7 @@
 # Netflix - 글로벌 스트리밍을 위한 멀티 리전 아키텍처
 
 > **Day 1: AWS 개요 및 글로벌 인프라**  
-> **주요 AWS 서비스**: Regions, Availability Zones, Edge Locations, CloudFront
+> **주요 AWS 서비스**: CloudFront, Regions, Availability Zones, Edge Locations
 
 ---
 
@@ -10,7 +10,7 @@
 - **기업명**: Netflix
 - **업종**: 미디어 & 엔터테인먼트
 - **규모**: Enterprise <!-- Startup/Medium/Enterprise -->
-- **주요 AWS 서비스**: Regions, Availability Zones, Edge Locations, CloudFront
+- **주요 AWS 서비스**: CloudFront, Regions, Availability Zones, Edge Locations
 - **사례 출처**: https://aws.amazon.com/architecture/customers/netflix <!-- 공개 자료 링크 또는 "AWS Well-Architected Framework 기반" -->
 - **사례 유형**: 실제 기업 사례 <!-- "실제 기업 사례" 또는 "Best Practice 기반 가상 사례" -->
 
@@ -66,9 +66,9 @@ graph TB
     end
     
     subgraph "AWS 인프라 - Day 1"
-        A[Regions]
-        B1[Availability Zones]
-        B2[Edge Locations]
+        A[CloudFront]
+        B1[Regions]
+        B2[Availability Zones]
     end
 
     Users --> A
@@ -81,38 +81,38 @@ graph TB
 
 ### 핵심 서비스 구성
 
-#### Regions (Day 1 주요 서비스)
+#### CloudFront (Day 1 주요 서비스)
 
 **선택 이유**:
 - 높은 가용성 및 확장성 제공
 - 관리형 서비스로 운영 부담 감소
 
 **구성 방법** (AWS Console 기준):
-1. **Console 경로**: Services > Storage > Regions
+1. **Console 경로**: Services > Networking & Content Delivery > CloudFront
 2. **주요 설정**:
-   - Region: day1-resource
-   - Instance Type / Configuration: Standard
-   - Auto Scaling: 활성화
+   - Origin Domain: netflix-content.s3.amazonaws.com
+   - Viewer Protocol Policy: Redirect HTTP to HTTPS
+   - Price Class: Use All Edge Locations
 
 **다른 서비스와의 연계**:
 - **SNS** (Day 16): Day 16의 SNS (Simple Notification Service) 및 CloudFront와 연계
 - **Route 53** (Day 17): Day 17의 Route 53와 연계
 
-#### Availability Zones
+#### Regions
 
-**역할**: 고가용성을 위한 다중 가용 영역 배포
+**역할**: 지리적으로 분리된 AWS 데이터센터 위치 - 지연시간 최소화, 규정 준수, 재해 복구를 위한 리전 선택
 
 **구성 방법**:
-- 다중 AZ 배포를 통한 고가용성 구성
+- 비즈니스 요구사항(지연시간, 규정 준수, 비용)에 따라 최적의 리전 선택
 
-**연계 방식**: Multi-AZ Deployment
+**연계 방식**: Direct Integration
 
 ### 서비스 간 데이터 플로우
 
 ```mermaid
 sequenceDiagram
     participant User as 사용자
-    participant Service as Regions
+    participant Service as CloudFront
     participant Storage as 데이터 저장소
     
     User->>Service: 요청 전송
@@ -123,13 +123,13 @@ sequenceDiagram
 ```
 
 **플로우 설명**:
-1. **사용자 요청** → Regions
+1. **사용자 요청** → CloudFront
    - 사용자 요청을 받아 처리 시작
    
-2. **Regions** → **Availability Zones** (Day 1의 주요 서비스)
+2. **CloudFront** → **Regions** (Day 1의 주요 서비스)
    - 비즈니스 로직 처리 및 데이터 변환
    
-3. **Availability Zones** → **Data Storage**
+3. **Regions** → **Data Storage**
    - 데이터 저장 및 영속화
 
 4. **응답 반환** → 사용자
@@ -141,32 +141,32 @@ sequenceDiagram
 
 ### AWS Console 기반 설정
 
-#### 1단계: Regions 생성
+#### 1단계: CloudFront 생성
 
-**Console 경로**: Services > Compute > Regions > Create Resource
+**Console 경로**: Services > Networking & Content Delivery > CloudFront > Create Distribution
 
 **기본 설정**:
-- **Name/ID**: `day1-resource`
-- **Region**: `ap-northeast-2` (예: ap-northeast-2 - 서울)
-- **Name**: day1-resource
-- **Type**: Standard
+- **Name/ID**: `netflix-cdn-distribution`
+- **Region**: `Global (CloudFront는 글로벌 서비스)` (예: ap-northeast-2 - 서울)
+- **Origin Domain**: netflix-content.s3.amazonaws.com
+- **Viewer Protocol Policy**: Redirect HTTP to HTTPS
 
 **고급 설정**:
-- **High Availability**: Multi-AZ 배포
-  - 설명: 여러 가용 영역에 걸쳐 리소스 배포
-- **Backup**: 자동 백업 활성화
-  - 설명: 일일 자동 백업 및 7일 보관
+- **Cache Behavior**: CachingOptimized
+  - 설명: 최적화된 캐싱 정책 적용
+- **Compress Objects**: Yes (Gzip 압축)
+  - 설명: 자동 압축으로 전송 속도 향상
 
 **생성 확인**:
-- 상태가 "Available" 또는 "Active"로 변경될 때까지 대기 (약 5-10분)
+- 상태가 "Available" 또는 "Active"로 변경될 때까지 대기 (약 15-20분)
 - Console에서 리소스 상세 정보 확인
 
 #### 2단계: CloudWatch 연계 구성
 
-**Console 경로**: Services > Compute > Regions
+**Console 경로**: Services > Networking & Content Delivery > CloudFront
 
 **연결 설정**:
-1. Regions에서 생성한 리소스 선택
+1. CloudFront에서 생성한 리소스 선택
 2. "Actions" > "Configure Monitoring"
 3. CloudWatch 리소스 선택 또는 생성
 4. 연결 설정 저장
@@ -191,16 +191,16 @@ sequenceDiagram
 #### CloudFormation 템플릿 (선택사항)
 
 ```yaml
-# day1-resource-stack.yaml
+# netflix-cdn-distribution-stack.yaml
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Netflix - 글로벌 스트리밍을 위한 멀티 리전 아키텍처 - Regions 구성'
+Description: 'Netflix - 글로벌 스트리밍을 위한 멀티 리전 아키텍처 - CloudFront 구성'
 
 Resources:
-  Day1Resource:
-    Type: AWS::Regions::Resource
+  NetflixCDNDistribution:
+    Type: AWS::CloudFront::Distribution
     Properties:
-      Name: day1-resource
-      Type: Standard
+      Origins: [{DomainName: netflix-content.s3.amazonaws.com}]
+      Enabled: true
       Tags:
         - Key: Project
           Value: day1-project
@@ -212,7 +212,7 @@ Resources:
 
 ```hcl
 # main.tf
-resource "aws_regions" "day1-resource" {
+resource "aws_cloudfront" "netflix-cdn-distribution" {
   name = "day1-resource"
   type = "standard"
   
@@ -227,16 +227,16 @@ resource "aws_regions" "day1-resource" {
 
 #### CloudWatch 메트릭 구성
 
-**Console 경로**: CloudWatch > Metrics > Regions
+**Console 경로**: CloudWatch > Metrics > AWS/CloudFront
 
 **핵심 메트릭**:
-- **응답 시간**: 평균 응답 시간 측정
-  - 정상 범위: < 100ms
-  - 경고 임계값: > 200ms
+- **응답 시간**: CloudFront 요청 수 측정
+  - 정상 범위: > 1000 requests/min
+  - 경고 임계값: < 100 requests/min
   
-- **처리량**: 초당 처리 요청 수
-  - 정상 범위: > 1000 TPS
-  - 경고 임계값: < 500 TPS
+- **처리량**: 4xx 에러율 모니터링
+  - 정상 범위: < 5%
+  - 경고 임계값: > 10%
 
 #### 알람 설정
 
@@ -244,8 +244,8 @@ resource "aws_regions" "day1-resource" {
 
 **알람 구성**:
 ```yaml
-알람명: day1-high-latency-alarm
-메트릭: ResponseTime
+알람명: day1-cloudfront-error-alarm
+메트릭: 4xxErrorRate
 조건: >= (예: >= 80%)
 기간: 5분 (예: 5분)
 평가 기간: 2회 연속 (예: 2회 연속)
@@ -257,9 +257,9 @@ resource "aws_regions" "day1-resource" {
 **Console 경로**: CloudWatch > Dashboards > Create dashboard
 
 **위젯 구성**:
-- 응답 시간 그래프: 시계열 라인 차트
-- 처리량 그래프: 시계열 라인 차트
+- 요청 수 그래프: 시계열 라인 차트
 - 에러율 그래프: 시계열 라인 차트
+- 데이터 전송량 그래프: 시계열 라인 차트
 
 ---
 
@@ -363,7 +363,7 @@ graph LR
 - Day 1의 서비스들이 전체 아키텍처에서 핵심 역할 수행
 
 **서비스 의존성**:
-- Day 1 (Regions) → Day 16 (SNS)
+- Day 1 (CloudFront) → Day 16 (SNS)
 - Day 16 (SNS) → Day 17 (Route 53)
 
 ---
@@ -371,18 +371,18 @@ graph LR
 ## 📚 참고 자료
 
 ### AWS 공식 문서
-- [Regions 사용 설명서](https://docs.aws.amazon.com/regions/latest/userguide/)
-- [Regions API 레퍼런스](https://docs.aws.amazon.com/regions/latest/userguide/)
+- [CloudFront 사용 설명서](https://docs.aws.amazon.com/cloudfront/latest/userguide/)
+- [CloudFront API 레퍼런스](https://docs.aws.amazon.com/cloudfront/latest/userguide/)
 - [AWS Well-Architected Framework - Operational Excellence](https://docs.aws.amazon.com/wellarchitected/latest/framework/)
 
 ### 아키텍처 및 베스트 프랙티스
 - [AWS 아키텍처 센터 - 글로벌 스트리밍을 위한 멀티 리전 아키텍처](https://aws.amazon.com/architecture/)
-- [Regions 베스트 프랙티스](https://docs.aws.amazon.com/regions/latest/userguide/)
+- [CloudFront 베스트 프랙티스](https://docs.aws.amazon.com/cloudfront/latest/userguide/)
 - [보안 베스트 프랙티스 - IAM Best Practices](https://docs.aws.amazon.com/security/)
 
 ### 비용 최적화
 - [AWS 요금 계산기](https://calculator.aws/)
-- [Regions 요금 안내](https://aws.amazon.com/pricing)
+- [CloudFront 요금 안내](https://aws.amazon.com/pricing)
 - [비용 최적화 가이드](https://docs.aws.amazon.com/cost-management/)
 
 ### 기업 사례 및 발표 자료
@@ -397,8 +397,8 @@ graph LR
 
 ## 🎓 학습 포인트
 
-### 1. Regions의 실제 활용 방법
-- Regions의 핵심 기능 이해
+### 1. CloudFront의 실제 활용 방법
+- CloudFront의 핵심 기능 이해
 - 실제 프로덕션 환경 구성 방법
 - 모범 사례 및 안티 패턴
 
@@ -455,8 +455,8 @@ graph LR
 - `글로벌 스트리밍을 위한 멀티 리전 아키텍처`: 사례 연구 초점 (예: "글로벌 스트리밍 아키텍처")
 
 **서비스 정보**:
-- `Regions, Availability Zones, Edge Locations, CloudFront`: 주요 AWS 서비스 목록 (쉼표로 구분)
-- `Regions`: 주요 서비스 단수형
+- `CloudFront, Regions, Availability Zones, Edge Locations`: 주요 AWS 서비스 목록 (쉼표로 구분)
+- `CloudFront`: 주요 서비스 단수형
 - `CloudWatch`: 연계 서비스명
 
 **다이어그램**:
@@ -466,9 +466,9 @@ graph LR
     end
     
     subgraph "AWS 인프라 - Day 1"
-        A[Regions]
-        B1[Availability Zones]
-        B2[Edge Locations]
+        A[CloudFront]
+        B1[Regions]
+        B2[Availability Zones]
     end
 
     Users --> A
@@ -477,7 +477,7 @@ graph LR
 `: Mermaid 아키텍처 다이어그램 코드
 - `sequenceDiagram
     participant User as 사용자
-    participant Service as Regions
+    participant Service as CloudFront
     participant Storage as 데이터 저장소
     
     User->>Service: 요청 전송
@@ -495,14 +495,14 @@ graph LR
 `: 크로스 데이 통합 다이어그램 코드
 
 **메트릭 및 수치**:
-- `ResponseTime`: 메트릭 이름
+- `4xxErrorRate`: 메트릭 이름
 - `{before_value}`: 개선 전 값
 - `{after_value}`: 개선 후 값
 - `{improvement}`: 개선율 (%)
 
 **URL 및 링크**:
-- `https://docs.aws.amazon.com/regions/latest/userguide/`: AWS 공식 문서 URL
-- `https://docs.aws.amazon.com/regions/latest/userguide/`: API 레퍼런스 URL
+- `https://docs.aws.amazon.com/cloudfront/latest/userguide/`: AWS 공식 문서 URL
+- `https://docs.aws.amazon.com/cloudfront/latest/userguide/`: API 레퍼런스 URL
 - `https://aws.amazon.com/architecture/customers/netflix`: 기업 블로그 URL
 
 ### 작성 시 주의사항

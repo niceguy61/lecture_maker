@@ -24,7 +24,7 @@ DAILY_TOPICS: Dict[int, DailyTopicConfig] = {
     # Week 1: 기초 인프라 및 컴퓨팅
     1: {
         "title": "AWS 개요 및 글로벌 인프라",
-        "primary_services": ["Regions", "Availability Zones", "Edge Locations", "CloudFront"],
+        "primary_services": ["CloudFront", "Regions", "Availability Zones", "Edge Locations"],
         "case_study_company": "Netflix",
         "case_study_focus": "글로벌 스트리밍을 위한 멀티 리전 아키텍처",
         "related_days": [16, 17],  # CloudFront(Day 16), Route 53(Day 17)
