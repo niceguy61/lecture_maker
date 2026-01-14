@@ -371,14 +371,13 @@ graph LR
 ## 📚 참고 자료
 
 ### AWS 공식 문서
-- [CloudFront 사용 설명서](https://docs.aws.amazon.com/cloudfront/latest/userguide/)
-- [CloudFront API 레퍼런스](https://docs.aws.amazon.com/cloudfront/latest/userguide/)
+- [CloudFront 사용 설명서](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html)
+- [CloudFront API 레퍼런스](https://docs.aws.amazon.com/cloudfront/latest/APIReference/Welcome.html)
 - [AWS Well-Architected Framework - Operational Excellence](https://docs.aws.amazon.com/wellarchitected/latest/framework/)
 
 ### 아키텍처 및 베스트 프랙티스
 - [AWS 아키텍처 센터 - 글로벌 스트리밍을 위한 멀티 리전 아키텍처](https://aws.amazon.com/architecture/)
-- [CloudFront 베스트 프랙티스](https://docs.aws.amazon.com/cloudfront/latest/userguide/)
-- [보안 베스트 프랙티스 - IAM Best Practices](https://docs.aws.amazon.com/security/)
+- [보안 베스트 프랙티스 - IAM Best Practices](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html)
 
 ### 비용 최적화
 - [AWS 요금 계산기](https://calculator.aws/)
@@ -386,9 +385,9 @@ graph LR
 - [비용 최적화 가이드](https://docs.aws.amazon.com/cost-management/)
 
 ### 기업 사례 및 발표 자료
-- [Netflix 공식 블로그 포스트](https://aws.amazon.com/architecture/customers/netflix)
+- [Netflix 공식 블로그 포스트](https://aws.amazon.com/ko/blogs/korea/adventures-in-scaling-in-changing-times/)
 - [AWS re:Invent 발표: Netflix - 글로벌 스트리밍을 위한 멀티 리전 아키텍처](https://reinvent.awsevents.com/)
-- [AWS 고객 사례 연구](https://aws.amazon.com/architecture/customers/)
+- [AWS 고객 사례 연구](https://aws.amazon.com/ko/blogs/korea/2024-customer-cases/)
 
 ### 화이트페이퍼
 - [AWS Well-Architected Framework](https://docs.aws.amazon.com/whitepapers/)
