@@ -1,0 +1,27 @@
+```mermaid
+graph LR
+    subgraph "Stage 1: 기본 구성"
+        S1_Title[Day 2<br/>IAM (Identity and Access Management)]
+        S1_Services["IAM Users, Groups"]
+        S1_Title --> S1_Services
+    end
+    
+    subgraph "Stage 2: 서비스 확장"
+        S2_Base[Day 2 +<br/>Day 3]
+        S2_Services["IAM Users, EC2 Instances"]
+        S2_Base --> S2_Services
+    end
+    
+    subgraph "Stage 3: 완전한 통합"
+        S3_Base[Day 2 +<br/>Day 3 +<br/>Day 5]
+        S3_Services["IAM Users, EC2 Instances, VPC"]
+        S3_Base --> S3_Services
+    end
+    
+    S1_Services ==>|확장| S2_Services
+    S2_Services ==>|최적화| S3_Services
+
+    style S1_Services fill:#E8F5E9
+    style S2_Services fill:#FFF9C4
+    style S3_Services fill:#E1F5FE
+```

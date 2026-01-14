@@ -1,0 +1,27 @@
+```mermaid
+graph TB
+    subgraph "사용자 계층"
+        Users[👥 사용자/클라이언트]
+    end
+    
+    subgraph "AWS 클라우드 - GE Healthcare"
+        subgraph "리전: ap-northeast-2 (서울)"
+            Primary[🎯 Config]
+            Service1[⚙️ Systems Manager]
+            Service2[⚙️ Parameter Store]
+            Service3[⚙️ Patch Manager]
+        end
+        
+        subgraph "관리 및 보안"
+            Monitor[📊 CloudWatch]
+            Security[🔒 IAM]
+        end
+    end
+    
+    Users -->|요청| Primary
+    Primary -->|데이터 처리| Service1
+    Primary -->|데이터 처리| Service2
+    Primary -->|데이터 처리| Service3
+    Primary -.->|모니터링| Monitor
+    Primary -.->|인증/권한| Security
+```

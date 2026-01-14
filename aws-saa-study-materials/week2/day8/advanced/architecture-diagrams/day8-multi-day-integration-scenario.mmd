@@ -1,0 +1,37 @@
+```mermaid
+graph TB
+    subgraph "사용자 요청 플로우"
+        User[👤 사용자]
+    end
+    
+    subgraph "Day 8: S3 (Simple Storage Service)"
+        D8_S1[S3 Buckets]
+        D8_S2[Storage Classes]
+    end
+
+    subgraph "Day 1: AWS 개요 및 글로벌 인프라"
+        D1_S1[Regions]
+        D1_S2[Availability Zones]
+    end
+
+    subgraph "Day 16: SNS (Simple Notification Service) 및 CloudFront"
+        D16_S1[SNS]
+        D16_S2[CloudFront]
+    end
+
+    subgraph "Day 18: Lambda (서버리스 컴퓨팅)"
+        D18_S1[Lambda]
+        D18_S2[Lambda Layers]
+    end
+
+    subgraph "통합 사례: Dropbox"
+        Integration[🎯 End-to-End<br/>통합 아키텍처]
+    end
+    
+    User -->|1. 요청| D8_S1
+    D8_S1 -->|2. 데이터 처리| D1_S1
+    D1_S1 -->|3. 저장/전송| D16_S1
+    D16_S1 -->|4. 응답| D8_S1
+    D8_S1 -->|5. 결과 반환| User
+    D8_S1 -.->|모니터링| Integration
+```

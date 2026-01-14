@@ -1,0 +1,22 @@
+```mermaid
+sequenceDiagram
+    participant User as 👤 사용자
+    participant Primary as Regions
+    participant Storage as 데이터 저장소
+    participant Monitor as CloudWatch
+    
+    User->>Primary: 1. 요청 전송
+    activate Primary
+    
+    Primary->>Storage: 2. 데이터 조회/저장
+    activate Storage
+    Storage-->>Primary: 3. 데이터 응답
+    deactivate Storage
+    
+    Primary->>Monitor: 4. 메트릭 전송
+    
+    Primary-->>User: 5. 처리 결과 반환
+    deactivate Primary
+    
+    Note over User,Monitor: 전체 처리 시간: < 100ms
+```

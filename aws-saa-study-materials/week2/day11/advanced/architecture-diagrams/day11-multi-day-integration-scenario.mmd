@@ -1,0 +1,37 @@
+```mermaid
+graph TB
+    subgraph "사용자 요청 플로우"
+        User[👤 사용자]
+    end
+    
+    subgraph "Day 11: DynamoDB"
+        D11_S1[DynamoDB]
+        D11_S2[DAX]
+    end
+
+    subgraph "Day 10: RDS (Relational Database Service)"
+        D10_S1[RDS]
+        D10_S2[Multi-AZ]
+    end
+
+    subgraph "Day 18: Lambda (서버리스 컴퓨팅)"
+        D18_S1[Lambda]
+        D18_S2[Lambda Layers]
+    end
+
+    subgraph "Day 19: API Gateway"
+        D19_S1[API Gateway]
+        D19_S2[REST API]
+    end
+
+    subgraph "통합 사례: Duolingo"
+        Integration[🎯 End-to-End<br/>통합 아키텍처]
+    end
+    
+    User -->|1. 요청| D11_S1
+    D11_S1 -->|2. 데이터 처리| D10_S1
+    D10_S1 -->|3. 저장/전송| D18_S1
+    D18_S1 -->|4. 응답| D11_S1
+    D11_S1 -->|5. 결과 반환| User
+    D11_S1 -.->|모니터링| Integration
+```

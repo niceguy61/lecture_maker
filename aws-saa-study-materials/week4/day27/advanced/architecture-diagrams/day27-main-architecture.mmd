@@ -1,0 +1,21 @@
+```mermaid
+graph TB
+    subgraph "사용자 계층"
+        Users[👥 사용자/클라이언트]
+    end
+    
+    subgraph "AWS 클라우드 - AWS Certified Solutions Architect"
+        subgraph "리전: ap-northeast-2 (서울)"
+            Primary[🎯 All Services Review]
+        end
+        
+        subgraph "관리 및 보안"
+            Monitor[📊 CloudWatch]
+            Security[🔒 IAM]
+        end
+    end
+    
+    Users -->|요청| Primary
+    Primary -.->|모니터링| Monitor
+    Primary -.->|인증/권한| Security
+```

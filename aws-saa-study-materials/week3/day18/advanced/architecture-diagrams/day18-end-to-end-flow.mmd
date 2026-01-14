@@ -1,0 +1,33 @@
+```mermaid
+sequenceDiagram
+    participant User as 👤 사용자
+    participant D18 as Day 18<br/>Lambda
+    participant D11 as Day 11<br/>DynamoDB
+    participant D15 as Day 15<br/>SQS
+    participant D19 as Day 19<br/>API Gateway
+    participant Monitor as 📊 모니터링
+
+    User->>D18: 1. 초기 요청
+    activate D18
+
+    D18->>D11: 2. 데이터 처리 요청
+    activate D11
+    D11-->>D18: 3. 처리 결과
+    deactivate D11
+
+    D18->>D15: 3. 데이터 처리 요청
+    activate D15
+    D15-->>D18: 4. 처리 결과
+    deactivate D15
+
+    D18->>D19: 4. 데이터 처리 요청
+    activate D19
+    D19-->>D18: 5. 처리 결과
+    deactivate D19
+
+    D18->>Monitor: 메트릭 전송
+    D18-->>User: 최종 응답
+    deactivate D18
+
+    Note over User,Monitor: 총 8단계 처리<br/>여러 일차 서비스 통합
+```

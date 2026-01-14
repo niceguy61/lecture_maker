@@ -1,0 +1,32 @@
+```mermaid
+graph TB
+    subgraph "사용자 요청 플로우"
+        User[👤 사용자]
+    end
+    
+    subgraph "Day 1: AWS 개요 및 글로벌 인프라"
+        D1_S1[Regions]
+        D1_S2[Availability Zones]
+    end
+
+    subgraph "Day 16: SNS (Simple Notification Service) 및 CloudFront"
+        D16_S1[SNS]
+        D16_S2[CloudFront]
+    end
+
+    subgraph "Day 17: Route 53"
+        D17_S1[Route 53]
+        D17_S2[DNS]
+    end
+
+    subgraph "통합 사례: Netflix"
+        Integration[🎯 End-to-End<br/>통합 아키텍처]
+    end
+    
+    User -->|1. 요청| D1_S1
+    D1_S1 -->|2. 데이터 처리| D16_S1
+    D16_S1 -->|3. 저장/전송| D17_S1
+    D17_S1 -->|4. 응답| D1_S1
+    D1_S1 -->|5. 결과 반환| User
+    D1_S1 -.->|모니터링| Integration
+```

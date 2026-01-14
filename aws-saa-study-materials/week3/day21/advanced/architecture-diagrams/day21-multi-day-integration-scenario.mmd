@@ -1,0 +1,36 @@
+```mermaid
+graph TB
+    subgraph "사용자 요청 플로우"
+        User[👤 사용자]
+    end
+    
+    subgraph "Day 21: Week 3 복습 및 통합"
+        D21_S1[All Week 3 Services]
+    end
+
+    subgraph "Day 15: SQS (Simple Queue Service)"
+        D15_S1[SQS]
+        D15_S2[Standard Queue]
+    end
+
+    subgraph "Day 16: SNS (Simple Notification Service) 및 CloudFront"
+        D16_S1[SNS]
+        D16_S2[CloudFront]
+    end
+
+    subgraph "Day 17: Route 53"
+        D17_S1[Route 53]
+        D17_S2[DNS]
+    end
+
+    subgraph "통합 사례: DoorDash"
+        Integration[🎯 End-to-End<br/>통합 아키텍처]
+    end
+    
+    User -->|1. 요청| D21_S1
+    D21_S1 -->|2. 데이터 처리| D15_S1
+    D15_S1 -->|3. 저장/전송| D16_S1
+    D16_S1 -->|4. 응답| D21_S1
+    D21_S1 -->|5. 결과 반환| User
+    D21_S1 -.->|모니터링| Integration
+```

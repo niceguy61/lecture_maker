@@ -1,0 +1,36 @@
+```mermaid
+graph TB
+    subgraph "글로벌 계층"
+        Users[🌍 글로벌 사용자]
+        CDN[CloudFront CDN]
+        DNS[Route53 DNS]
+    end
+    
+    subgraph "리전: us-east-1 (버지니아)"
+        US_Primary[SNS]
+        US_DB[(데이터베이스)]
+    end
+    
+    subgraph "리전: ap-northeast-2 (서울)"
+        AP_Primary[SNS]
+        AP_DB[(데이터베이스)]
+    end
+    
+    subgraph "리전: eu-west-1 (아일랜드)"
+        EU_Primary[SNS]
+        EU_DB[(데이터베이스)]
+    end
+    
+    Users --> DNS
+    DNS --> CDN
+    CDN --> US_Primary
+    CDN --> AP_Primary
+    CDN --> EU_Primary
+    
+    US_Primary --> US_DB
+    AP_Primary --> AP_DB
+    EU_Primary --> EU_DB
+    
+    US_DB -.->|복제| AP_DB
+    AP_DB -.->|복제| EU_DB
+```

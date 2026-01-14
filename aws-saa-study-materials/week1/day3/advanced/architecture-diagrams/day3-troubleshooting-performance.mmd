@@ -1,0 +1,40 @@
+flowchart TD
+    Start[성능 저하 감지:<br/>EC2 Instances] --> Baseline{기준선 메트릭<br/>확인}
+    
+    Baseline -->|응답시간 증가| Latency[지연 시간 분석]
+    Baseline -->|처리량 감소| Throughput[처리량 분석]
+    Baseline -->|에러율 증가| ErrorRate[에러율 분석]
+    
+    Latency --> LatencyCheck{지연 위치?}
+    LatencyCheck -->|네트워크| NetOpt[Console: VPC<br/>네트워크 최적화]
+    LatencyCheck -->|컴퓨팅| CompOpt[Console: EC2 Instances<br/>리소스 증설]
+    LatencyCheck -->|데이터베이스| DBOpt[Console: RDS/DynamoDB<br/>쿼리 최적화]
+    
+    Throughput --> ThroughputCheck{병목 지점?}
+    ThroughputCheck -->|리소스 한계| Scale[Auto Scaling<br/>설정 조정]
+    ThroughputCheck -->|동시성 제한| Concurrency[동시성 한도<br/>증가 요청]
+    ThroughputCheck -->|큐 적체| Queue[Console: SQS<br/>큐 처리 최적화]
+    
+    ErrorRate --> ErrorCheck{에러 유형?}
+    ErrorCheck -->|5xx 에러| ServerError[서버 리소스<br/>증설]
+    ErrorCheck -->|4xx 에러| ClientError[클라이언트 요청<br/>검증 강화]
+    ErrorCheck -->|타임아웃| Timeout[타임아웃 설정<br/>조정]
+    
+    NetOpt --> Implement[최적화 구현]
+    CompOpt --> Implement
+    DBOpt --> Implement
+    Scale --> Implement
+    Concurrency --> Implement
+    Queue --> Implement
+    ServerError --> Implement
+    ClientError --> Implement
+    Timeout --> Implement
+    
+    Implement --> Test[성능 테스트]
+    Test --> Verify{개선됨?}
+    
+    Verify -->|Yes| Monitor[지속적 모니터링<br/>설정]
+    Verify -->|No| RootCause[근본 원인<br/>재분석]
+    
+    RootCause --> Baseline
+    Monitor --> End[완료]

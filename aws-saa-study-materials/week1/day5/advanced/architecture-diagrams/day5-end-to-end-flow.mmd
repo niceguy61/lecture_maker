@@ -1,0 +1,33 @@
+```mermaid
+sequenceDiagram
+    participant User as 👤 사용자
+    participant D5 as Day 5<br/>VPC
+    participant D6 as Day 6<br/>NAT Gateway
+    participant D2 as Day 2<br/>IAM Users
+    participant D3 as Day 3<br/>EC2 Instances
+    participant Monitor as 📊 모니터링
+
+    User->>D5: 1. 초기 요청
+    activate D5
+
+    D5->>D6: 2. 데이터 처리 요청
+    activate D6
+    D6-->>D5: 3. 처리 결과
+    deactivate D6
+
+    D5->>D2: 3. 데이터 처리 요청
+    activate D2
+    D2-->>D5: 4. 처리 결과
+    deactivate D2
+
+    D5->>D3: 4. 데이터 처리 요청
+    activate D3
+    D3-->>D5: 5. 처리 결과
+    deactivate D3
+
+    D5->>Monitor: 메트릭 전송
+    D5-->>User: 최종 응답
+    deactivate D5
+
+    Note over User,Monitor: 총 8단계 처리<br/>여러 일차 서비스 통합
+```

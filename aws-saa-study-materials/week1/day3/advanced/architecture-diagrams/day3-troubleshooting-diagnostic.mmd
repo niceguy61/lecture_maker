@@ -1,0 +1,52 @@
+flowchart TD
+    Start[문제 발생:<br/>EC2 Instances 성능 저하] --> Check1{CloudWatch<br/>메트릭 확인}
+    
+    Check1 -->|비정상| Metric1[Console: CloudWatch > Metrics<br/>주요 메트릭 분석]
+    Check1 -->|정상| Check2{로그 확인}
+    
+    Metric1 --> MetricAnalysis{메트릭 유형?}
+    MetricAnalysis -->|CPU/메모리 높음| Fix1[리소스 스케일 업<br/>또는 스케일 아웃]
+    MetricAnalysis -->|네트워크 지연| Fix2[네트워크 구성<br/>최적화]
+    MetricAnalysis -->|에러율 증가| Check2
+    
+    Check2 -->|에러 발견| Log1[Console: CloudWatch > Log groups<br/>에러 패턴 분석]
+    Check2 -->|정상| Check3{네트워크<br/>연결 상태}
+    
+    Log1 --> LogAnalysis{에러 유형?}
+    LogAnalysis -->|애플리케이션 에러| Fix3[애플리케이션<br/>코드 수정]
+    LogAnalysis -->|권한 에러| Fix4[IAM 권한<br/>검토 및 수정]
+    LogAnalysis -->|리소스 부족| Fix1
+    
+    Check3 -->|연결 실패| Network1[Console: VPC > Security Groups<br/>보안 그룹 규칙 확인]
+    Check3 -->|정상| Check4{비용<br/>급증 확인}
+    
+    Network1 --> NetworkFix{문제 유형?}
+    NetworkFix -->|인바운드 규칙| Fix5[Security Group<br/>인바운드 규칙 수정]
+    NetworkFix -->|아웃바운드 규칙| Fix6[Security Group<br/>아웃바운드 규칙 수정]
+    NetworkFix -->|라우팅 문제| Fix7[Route Table<br/>라우팅 수정]
+    
+    Check4 -->|비용 급증| Cost1[Console: Billing > Cost Explorer<br/>비용 분석]
+    Check4 -->|정상| Verify
+    
+    Cost1 --> CostAnalysis{비용 원인?}
+    CostAnalysis -->|리소스 과다| Fix8[불필요한 리소스<br/>정리 및 최적화]
+    CostAnalysis -->|데이터 전송| Fix9[데이터 전송<br/>최적화]
+    CostAnalysis -->|스토리지| Fix10[스토리지 클래스<br/>최적화]
+    
+    Fix1 --> Verify[검증 및 모니터링]
+    Fix2 --> Verify
+    Fix3 --> Verify
+    Fix4 --> Verify
+    Fix5 --> Verify
+    Fix6 --> Verify
+    Fix7 --> Verify
+    Fix8 --> Verify
+    Fix9 --> Verify
+    Fix10 --> Verify
+    
+    Verify --> Success{해결됨?}
+    Success -->|Yes| Monitor[모니터링 강화<br/>알람 설정]
+    Success -->|No| Escalate[AWS Support<br/>케이스 생성]
+    
+    Monitor --> End[완료]
+    Escalate --> End

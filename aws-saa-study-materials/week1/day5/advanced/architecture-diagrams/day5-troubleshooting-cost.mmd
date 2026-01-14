@@ -1,0 +1,53 @@
+flowchart TD
+    Start[비용 급증 감지:<br/>VPC] --> Alert[Console: Billing<br/>비용 알람 확인]
+    
+    Alert --> Analyze[Console: Cost Explorer<br/>비용 분석]
+    Analyze --> Breakdown{비용 항목?}
+    
+    Breakdown -->|컴퓨팅 비용| Compute[컴퓨팅 리소스<br/>분석]
+    Breakdown -->|스토리지 비용| Storage[스토리지<br/>분석]
+    Breakdown -->|데이터 전송| Transfer[데이터 전송<br/>분석]
+    Breakdown -->|기타 서비스| Other[기타 서비스<br/>분석]
+    
+    Compute --> ComputeCheck{원인?}
+    ComputeCheck -->|과다 프로비저닝| Rightsize[Console: VPC<br/>리소스 사이징 최적화]
+    ComputeCheck -->|미사용 리소스| Cleanup[미사용 리소스<br/>정리]
+    ComputeCheck -->|스팟 미활용| Spot[Console: EC2<br/>스팟 인스턴스 활용]
+    
+    Storage --> StorageCheck{원인?}
+    StorageCheck -->|불필요한 데이터| Delete[오래된 데이터<br/>삭제]
+    StorageCheck -->|비효율적 클래스| Lifecycle[Console: S3<br/>Lifecycle 정책 설정]
+    StorageCheck -->|과다 스냅샷| SnapClean[Console: EC2/RDS<br/>스냅샷 정리]
+    
+    Transfer --> TransferCheck{원인?}
+    TransferCheck -->|리전 간 전송| Regional[리전 간 전송<br/>최소화]
+    TransferCheck -->|인터넷 전송| CDN[Console: CloudFront<br/>CDN 활용]
+    TransferCheck -->|VPC 엔드포인트 미사용| Endpoint[Console: VPC<br/>VPC 엔드포인트 설정]
+    
+    Other --> OtherCheck{서비스?}
+    OtherCheck -->|로그 과다| LogRetention[Console: CloudWatch<br/>로그 보관 기간 조정]
+    OtherCheck -->|API 호출 과다| APIOptimize[API 호출<br/>최적화]
+    OtherCheck -->|백업 과다| BackupPolicy[백업 정책<br/>최적화]
+    
+    Rightsize --> Implement[최적화 구현]
+    Cleanup --> Implement
+    Spot --> Implement
+    Delete --> Implement
+    Lifecycle --> Implement
+    SnapClean --> Implement
+    Regional --> Implement
+    CDN --> Implement
+    Endpoint --> Implement
+    LogRetention --> Implement
+    APIOptimize --> Implement
+    BackupPolicy --> Implement
+    
+    Implement --> Monitor[Console: Billing<br/>비용 모니터링 설정]
+    Monitor --> Budget[Console: Budgets<br/>예산 알람 설정]
+    Budget --> Verify{비용 감소?}
+    
+    Verify -->|Yes| Report[비용 최적화<br/>보고서 작성]
+    Verify -->|No| Review[추가 최적화<br/>항목 검토]
+    
+    Review --> Analyze
+    Report --> End[완료]

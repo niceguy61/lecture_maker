@@ -1,0 +1,27 @@
+```mermaid
+graph LR
+    subgraph "Stage 1: 기본 구성"
+        S1_Title[Day 21<br/>Week 3 복습 및 통합]
+        S1_Services["All Week 3 Services"]
+        S1_Title --> S1_Services
+    end
+    
+    subgraph "Stage 2: 서비스 확장"
+        S2_Base[Day 21 +<br/>Day 15]
+        S2_Services["All Week 3 Services, SQS"]
+        S2_Base --> S2_Services
+    end
+    
+    subgraph "Stage 3: 완전한 통합"
+        S3_Base[Day 21 +<br/>Day 15 +<br/>Day 16]
+        S3_Services["All Week 3 Services, SQS, SNS"]
+        S3_Base --> S3_Services
+    end
+    
+    S1_Services ==>|확장| S2_Services
+    S2_Services ==>|최적화| S3_Services
+
+    style S1_Services fill:#E8F5E9
+    style S2_Services fill:#FFF9C4
+    style S3_Services fill:#E1F5FE
+```

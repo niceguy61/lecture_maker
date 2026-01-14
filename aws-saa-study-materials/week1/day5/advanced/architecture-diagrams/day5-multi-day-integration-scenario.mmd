@@ -1,0 +1,37 @@
+```mermaid
+graph TB
+    subgraph "사용자 요청 플로우"
+        User[👤 사용자]
+    end
+    
+    subgraph "Day 5: VPC (Virtual Private Cloud) 기초"
+        D5_S1[VPC]
+        D5_S2[Subnets]
+    end
+
+    subgraph "Day 6: VPC 고급 기능"
+        D6_S1[NAT Gateway]
+        D6_S2[VPC Peering]
+    end
+
+    subgraph "Day 2: IAM (Identity and Access Management)"
+        D2_S1[IAM Users]
+        D2_S2[Groups]
+    end
+
+    subgraph "Day 3: EC2 (Elastic Compute Cloud) 기초"
+        D3_S1[EC2 Instances]
+        D3_S2[Instance Types]
+    end
+
+    subgraph "통합 사례: Slack"
+        Integration[🎯 End-to-End<br/>통합 아키텍처]
+    end
+    
+    User -->|1. 요청| D5_S1
+    D5_S1 -->|2. 데이터 처리| D6_S1
+    D6_S1 -->|3. 저장/전송| D2_S1
+    D2_S1 -->|4. 응답| D5_S1
+    D5_S1 -->|5. 결과 반환| User
+    D5_S1 -.->|모니터링| Integration
+```

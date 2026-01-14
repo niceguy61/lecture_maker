@@ -1,0 +1,27 @@
+```mermaid
+graph LR
+    subgraph "Stage 1: 기본 구성"
+        S1_Title[Day 11<br/>DynamoDB]
+        S1_Services["DynamoDB, DAX"]
+        S1_Title --> S1_Services
+    end
+    
+    subgraph "Stage 2: 서비스 확장"
+        S2_Base[Day 11 +<br/>Day 10]
+        S2_Services["DynamoDB, RDS"]
+        S2_Base --> S2_Services
+    end
+    
+    subgraph "Stage 3: 완전한 통합"
+        S3_Base[Day 11 +<br/>Day 10 +<br/>Day 18]
+        S3_Services["DynamoDB, RDS, Lambda"]
+        S3_Base --> S3_Services
+    end
+    
+    S1_Services ==>|확장| S2_Services
+    S2_Services ==>|최적화| S3_Services
+
+    style S1_Services fill:#E8F5E9
+    style S2_Services fill:#FFF9C4
+    style S3_Services fill:#E1F5FE
+```

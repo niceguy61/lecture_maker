@@ -1,0 +1,52 @@
+flowchart TD
+    Start[보안 이슈 감지:<br/>EC2 Instances] --> Identify{이슈 유형?}
+    
+    Identify -->|무단 접근 시도| Access[접근 로그 분석]
+    Identify -->|권한 오류| Permission[권한 설정 검토]
+    Identify -->|데이터 유출 위험| DataLeak[데이터 보호 검토]
+    Identify -->|규정 위반| Compliance[컴플라이언스 검토]
+    
+    Access --> AccessCheck[Console: CloudTrail<br/>API 호출 기록 확인]
+    AccessCheck --> AccessAnalysis{접근 패턴?}
+    AccessAnalysis -->|비정상 IP| BlockIP[Console: Security Group<br/>IP 차단]
+    AccessAnalysis -->|비정상 시간| Alert[CloudWatch 알람<br/>설정 강화]
+    AccessAnalysis -->|무단 자격증명| RevokeKey[Console: IAM<br/>액세스 키 비활성화]
+    
+    Permission --> PermCheck[Console: IAM<br/>정책 및 역할 검토]
+    PermCheck --> PermAnalysis{권한 문제?}
+    PermAnalysis -->|과도한 권한| Restrict[최소 권한 원칙<br/>적용]
+    PermAnalysis -->|부족한 권한| Grant[필요 권한<br/>추가]
+    PermAnalysis -->|잘못된 정책| Fix[정책 수정<br/>및 테스트]
+    
+    DataLeak --> DataCheck[Console: Macie/GuardDuty<br/>데이터 보호 상태 확인]
+    DataCheck --> DataAnalysis{데이터 위험?}
+    DataAnalysis -->|암호화 미적용| Encrypt[Console: KMS<br/>암호화 활성화]
+    DataAnalysis -->|공개 접근| Private[Console: S3/RDS<br/>퍼블릭 액세스 차단]
+    DataAnalysis -->|로깅 부족| Logging[Console: CloudTrail<br/>로깅 활성화]
+    
+    Compliance --> CompCheck[Console: Config<br/>규정 준수 상태 확인]
+    CompCheck --> CompAnalysis{위반 항목?}
+    CompAnalysis -->|설정 위반| ConfigFix[Config Rules<br/>자동 수정 활성화]
+    CompAnalysis -->|감사 로그 부족| AuditLog[감사 로깅<br/>강화]
+    CompAnalysis -->|백업 부족| Backup[자동 백업<br/>설정]
+    
+    BlockIP --> Verify[보안 검증]
+    Alert --> Verify
+    RevokeKey --> Verify
+    Restrict --> Verify
+    Grant --> Verify
+    Fix --> Verify
+    Encrypt --> Verify
+    Private --> Verify
+    Logging --> Verify
+    ConfigFix --> Verify
+    AuditLog --> Verify
+    Backup --> Verify
+    
+    Verify --> Success{해결됨?}
+    Success -->|Yes| Document[보안 사고<br/>문서화]
+    Success -->|No| Escalate[보안팀<br/>에스컬레이션]
+    
+    Document --> Prevent[예방 조치<br/>구현]
+    Escalate --> Prevent
+    Prevent --> End[완료]

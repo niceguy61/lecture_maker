@@ -1,0 +1,33 @@
+```mermaid
+sequenceDiagram
+    participant User as 👤 사용자
+    participant D21 as Day 21<br/>All Week 3 Services
+    participant D15 as Day 15<br/>SQS
+    participant D16 as Day 16<br/>SNS
+    participant D17 as Day 17<br/>Route 53
+    participant Monitor as 📊 모니터링
+
+    User->>D21: 1. 초기 요청
+    activate D21
+
+    D21->>D15: 2. 데이터 처리 요청
+    activate D15
+    D15-->>D21: 3. 처리 결과
+    deactivate D15
+
+    D21->>D16: 3. 데이터 처리 요청
+    activate D16
+    D16-->>D21: 4. 처리 결과
+    deactivate D16
+
+    D21->>D17: 4. 데이터 처리 요청
+    activate D17
+    D17-->>D21: 5. 처리 결과
+    deactivate D17
+
+    D21->>Monitor: 메트릭 전송
+    D21-->>User: 최종 응답
+    deactivate D21
+
+    Note over User,Monitor: 총 8단계 처리<br/>여러 일차 서비스 통합
+```

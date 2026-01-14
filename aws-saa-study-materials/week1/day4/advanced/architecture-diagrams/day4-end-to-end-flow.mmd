@@ -1,0 +1,33 @@
+```mermaid
+sequenceDiagram
+    participant User as 👤 사용자
+    participant D4 as Day 4<br/>Auto Scaling
+    participant D3 as Day 3<br/>EC2 Instances
+    participant D13 as Day 13<br/>ALB
+    participant D14 as Day 14<br/>All Week 2 Services
+    participant Monitor as 📊 모니터링
+
+    User->>D4: 1. 초기 요청
+    activate D4
+
+    D4->>D3: 2. 데이터 처리 요청
+    activate D3
+    D3-->>D4: 3. 처리 결과
+    deactivate D3
+
+    D4->>D13: 3. 데이터 처리 요청
+    activate D13
+    D13-->>D4: 4. 처리 결과
+    deactivate D13
+
+    D4->>D14: 4. 데이터 처리 요청
+    activate D14
+    D14-->>D4: 5. 처리 결과
+    deactivate D14
+
+    D4->>Monitor: 메트릭 전송
+    D4-->>User: 최종 응답
+    deactivate D4
+
+    Note over User,Monitor: 총 8단계 처리<br/>여러 일차 서비스 통합
+```

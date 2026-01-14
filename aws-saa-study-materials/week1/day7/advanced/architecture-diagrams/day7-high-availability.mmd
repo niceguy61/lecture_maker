@@ -1,0 +1,38 @@
+```mermaid
+graph TB
+    subgraph "사용자"
+        Users[👥 사용자]
+    end
+    
+    subgraph "로드 밸런싱"
+        ELB[Elastic Load Balancer]
+    end
+    
+    subgraph "가용 영역 A"
+        AZ_A_App[All Week 1 Services]
+        AZ_A_DB[(Primary DB)]
+    end
+    
+    subgraph "가용 영역 B"
+        AZ_B_App[All Week 1 Services]
+        AZ_B_DB[(Standby DB)]
+    end
+    
+    subgraph "가용 영역 C"
+        AZ_C_App[All Week 1 Services]
+    end
+    
+    Users --> ELB
+    ELB --> AZ_A_App
+    ELB --> AZ_B_App
+    ELB --> AZ_C_App
+    
+    AZ_A_App --> AZ_A_DB
+    AZ_B_App --> AZ_A_DB
+    AZ_C_App --> AZ_A_DB
+    
+    AZ_A_DB -.->|동기 복제| AZ_B_DB
+    
+    style AZ_A_DB fill:#90EE90
+    style AZ_B_DB fill:#FFB6C1
+```

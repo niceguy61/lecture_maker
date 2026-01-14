@@ -1,0 +1,36 @@
+```mermaid
+graph TB
+    subgraph "사용자 요청 플로우"
+        User[👤 사용자]
+    end
+    
+    subgraph "Day 4: EC2 고급 기능"
+        D4_S1[Auto Scaling]
+        D4_S2[Load Balancing]
+    end
+
+    subgraph "Day 3: EC2 (Elastic Compute Cloud) 기초"
+        D3_S1[EC2 Instances]
+        D3_S2[Instance Types]
+    end
+
+    subgraph "Day 13: ELB (Elastic Load Balancing)"
+        D13_S1[ALB]
+        D13_S2[NLB]
+    end
+
+    subgraph "Day 14: Week 2 복습 및 통합"
+        D14_S1[All Week 2 Services]
+    end
+
+    subgraph "통합 사례: Uber"
+        Integration[🎯 End-to-End<br/>통합 아키텍처]
+    end
+    
+    User -->|1. 요청| D4_S1
+    D4_S1 -->|2. 데이터 처리| D3_S1
+    D3_S1 -->|3. 저장/전송| D13_S1
+    D13_S1 -->|4. 응답| D4_S1
+    D4_S1 -->|5. 결과 반환| User
+    D4_S1 -.->|모니터링| Integration
+```

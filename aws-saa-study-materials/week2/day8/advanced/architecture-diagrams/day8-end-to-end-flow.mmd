@@ -1,0 +1,33 @@
+```mermaid
+sequenceDiagram
+    participant User as 👤 사용자
+    participant D8 as Day 8<br/>S3 Buckets
+    participant D1 as Day 1<br/>Regions
+    participant D16 as Day 16<br/>SNS
+    participant D18 as Day 18<br/>Lambda
+    participant Monitor as 📊 모니터링
+
+    User->>D8: 1. 초기 요청
+    activate D8
+
+    D8->>D1: 2. 데이터 처리 요청
+    activate D1
+    D1-->>D8: 3. 처리 결과
+    deactivate D1
+
+    D8->>D16: 3. 데이터 처리 요청
+    activate D16
+    D16-->>D8: 4. 처리 결과
+    deactivate D16
+
+    D8->>D18: 4. 데이터 처리 요청
+    activate D18
+    D18-->>D8: 5. 처리 결과
+    deactivate D18
+
+    D8->>Monitor: 메트릭 전송
+    D8-->>User: 최종 응답
+    deactivate D8
+
+    Note over User,Monitor: 총 8단계 처리<br/>여러 일차 서비스 통합
+```
