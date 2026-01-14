@@ -439,3 +439,25 @@ def get_service_dependency_graph() -> Dict[str, List[str]]:
     """서비스 의존성 그래프 반환"""
     mapper = get_service_dependency_mapper()
     return mapper.generate_service_dependency_graph()
+
+
+# Export CROSS_DAY_INTEGRATIONS for integration tests
+def _build_cross_day_integrations() -> Dict[str, Dict]:
+    """크로스 데이 통합 시나리오 딕셔너리 생성"""
+    mapper = get_service_dependency_mapper()
+    scenarios = mapper.get_integration_scenarios()
+    
+    return {
+        scenario.scenario_id: {
+            "name": scenario.name,
+            "description": scenario.description,
+            "primary_days": scenario.involved_days,
+            "services": scenario.services,
+            "integration_pattern": scenario.integration_pattern,
+            "use_case": scenario.use_case
+        }
+        for scenario in scenarios
+    }
+
+
+CROSS_DAY_INTEGRATIONS = _build_cross_day_integrations()
